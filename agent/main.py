@@ -1,5 +1,7 @@
 from strands import Agent
 
+from fastapi.staticfiles import StaticFiles
+
 from tools.tasks import (
     get_upcoming_tasks,
     get_bill_history,

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LifeOps Dashboard</title>
+
+    <link rel="stylesheet" href="/dashboard/styles.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">L</div>
+
+            <div>
+                <h1>LifeOps</h1>
+                <span>Personal Operations</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-item active">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="#bills" class="nav-item">
+                <span>◷</span>
+                Bills
+            </a>
+
+            <a href="#activity" class="nav-item">
+                <span>↻</span>
+                Activity
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>System Online</strong>
+                    <small>LifeOps API connected</small>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <p class="eyebrow">OPERATIONS CENTER</p>
+                <h2>Good evening</h2>
+                <p class="subtitle">
+                    Here's what's happening with your financial operations.
+                </p>
+            </div>
+
+            <button id="runButton" class="primary-button">
+                <span>▶</span>
+                Run LifeOps
+            </button>
+
+        </header>
+
+
+        <!-- STATS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Total Bills</span>
+                    <div class="stat-icon">▦</div>
+                </div>
+
+                <strong id="totalBills">—</strong>
+
+                <small>Tracked obligations</small>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Total Paid</span>
+                    <div class="stat-icon success">✓</div>
+                </div>
+
+                <strong id="totalPaid">—</strong>
+
+                <small id="paidCount">— paid bills</small>
+            </div>
+
+
+            <div class="stat-card warning-card">
+                <div class="stat-header">
+                    <span>Awaiting Approval</span>
+                    <div class="stat-icon warning">!</div>
+                </div>
+
+                <strong id="approvalAmount">—</strong>
+
+                <small id="approvalCount">— bills require attention</small>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span>Blocked</span>
+                    <div class="stat-icon danger">×</div>
+                </div>
+
+                <strong id="blockedAmount">—</strong>
+
+                <small id="blockedCount">— blocked bills</small>
+            </div>
+
+        </section>
+
+
+        <!-- BILLS -->
+        <section class="panel" id="bills">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Financial Obligations</h3>
+                    <p>Current status of all tracked bills</p>
+                </div>
+
+                <button class="refresh-button" onclick="loadDashboard()">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Bill</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Decision</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="billsTable">
+
+                        <tr>
+                            <td colspan="6" class="loading">
+                                Loading LifeOps data...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIVITY -->
+        <section class="panel activity-panel" id="activity">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>LifeOps Activity</h3>
+                    <p>Latest workflow output</p>
+                </div>
+
+                <span class="live-label">
+                    <span class="status-dot"></span>
+                    LIVE
+                </span>
+
+            </div>
+
+            <pre id="activityOutput">Waiting for LifeOps...</pre>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+
+<script src="/dashboard/app.js"></script>
+
+</body>
+</html>

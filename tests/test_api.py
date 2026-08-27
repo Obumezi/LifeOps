@@ -31,6 +31,24 @@ def test_unknown_bill_endpoint():
     assert response.json()["result"].startswith("BILL_NOT_FOUND")
 
 
+
+
+
+def test_dashboard_endpoint():
+    response = client.get("/api/dashboard")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "summary" in data
+    assert "bills" in data
+
+    assert data["summary"]["total_bills"] == 3
+
+    
+
+
 def test_approval_requires_needs_approval():
     conn = sqlite3.connect(DB_PATH)
 
