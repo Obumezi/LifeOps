@@ -14,7 +14,7 @@
 
     <link
         rel="stylesheet"
-        href="/dashboard/styles.css?v=7"
+        href="/dashboard/styles.css?v=8"
     >
 
 </head>
@@ -471,19 +471,102 @@
 </div>
 
 
+<!-- =========================================================
+     APPROVAL MODAL
+     ========================================================= -->
+
+<div id="approvalModal" class="modal-overlay">
+
+    <div class="approval-modal">
+
+        <div class="modal-icon">
+            !
+        </div>
+
+        <div class="modal-heading">
+
+            <p class="modal-eyebrow">
+                HUMAN APPROVAL REQUIRED
+            </p>
+
+            <h3>
+                Review Payment
+            </h3>
+
+            <p>
+                LifeOps paused this payment because it requires your authorization.
+            </p>
+
+        </div>
+
+
+        <div class="approval-details">
+
+            <div class="approval-detail-row">
+                <span>Bill</span>
+                <strong id="modalBillName">—</strong>
+            </div>
+
+            <div class="approval-detail-row">
+                <span>Amount</span>
+                <strong id="modalBillAmount">—</strong>
+            </div>
+
+        </div>
+
+
+        <div class="approval-reason">
+
+            <span class="reason-label">
+                WHY LIFEOPS FLAGGED THIS
+            </span>
+
+            <p id="modalReason">
+                This payment requires human approval.
+            </p>
+
+        </div>
+
+
+        <div id="modalError" class="modal-error"></div>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelApprovalButton"
+                class="modal-cancel-button"
+                type="button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmApprovalButton"
+                class="modal-approve-button"
+                type="button"
+            >
+                Approve & Pay
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 
 <!-- =========================================================
      TOAST
      ========================================================= -->
 
 <div
-    id="toast"
-    class="toast"
-></div>
+    id="toast" class="toast"></div>
 
 
 
-<script src="/dashboard/app.js?v=7"></script>
+<script src="/dashboard/app.js?v=11"></script>
 
 
 </body>

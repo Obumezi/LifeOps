@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
+from api.activity import get_activity_history
 
 from agent.orchestrator import run_lifeops
 from agent.action_router import (
@@ -125,4 +126,10 @@ def approve_legacy(bill_name: str):
 def pay_legacy(bill_name: str):
     return {
         "result": pay_bill(bill_name)
+    }
+
+@app.get("/api/activity")
+def activity():
+    return {
+        "activity": get_activity_history()
     }

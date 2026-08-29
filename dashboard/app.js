@@ -1,5 +1,7 @@
 const API = "/api";
 
+let pendingApproval = null;
+
 
 
 /* ============================================================
@@ -649,39 +651,41 @@ function getActions(bill) {
 
     }
 
-
+/* ****** check this */
 
     if (
-        bill.decision === "NEEDS_APPROVAL"
-    ) {
+    bill.decision === "NEEDS_APPROVAL"
+) {
 
-        return `
+    const amount =
+        Number(bill.amount || 0);
 
-            <div class="action-group">
+    const reason =
+        bill.reason ||
+        bill.decision_reason ||
+        "This payment exceeds LifeOps automatic payment safety limits.";
 
-                <button
-                    class="action-button approve"
-                    onclick="approveBill('${encodedName}')"
-                >
 
-                    Approve
+    return `
 
-                </button>
+        <div class="action-group">
 
-                <button
-                    class="action-button pay"
-                    disabled
-                >
+            <button
+                class="action-button approve"
+                onclick="openApprovalModal(
+                    '${encodedName}',
+                    ${amount},
+                    '${encodeURIComponent(reason)}'
+                )"
+            >
+                Review
+            </button>
 
-                    Pay
+        </div>
 
-                </button>
+    `;
 
-            </div>
-
-        `;
-
-    }
+}
 
 
 
@@ -967,57 +971,202 @@ async function loadDashboard() {
    ============================================================ */
 
 
-async function approveBill(encodedName) {
+function openApprovalModal(
+    encodedName,
+    amount,
+    encodedReason
+) {
 
     const billName =
-        decodeURIComponent(
-            encodedName
-        );
+        decodeURIComponent(encodedName);
 
 
-    const confirmed =
-        confirm(
-            `Approve payment for ${billName}?`
-        );
+    const reason =
+        decodeURIComponent(encodedReason);
 
 
-    if (!confirmed) {
+    pendingApproval = {
+        encodedName,
+        billName,
+        amount,
+        reason
+    };
+
+
+    document
+        .getElementById("modalBillName")
+        .textContent =
+            billName;
+
+
+    document
+        .getElementById("modalBillAmount")
+        .textContent =
+            formatMoney(amount);
+
+
+    document
+        .getElementById("modalReason")
+        .textContent =
+            reason;
+
+
+    document
+        .getElementById("modalError")
+        .textContent = "";
+
+
+    document
+        .getElementById("approvalModal")
+        .classList.add("show");
+
+}
+
+
+
+function closeApprovalModal() {
+
+    document
+        .getElementById("approvalModal")
+        .classList.remove("show");
+
+
+    pendingApproval = null;
+
+}
+
+
+
+async function approveAndPay() {
+
+    if (!pendingApproval) {
         return;
     }
 
 
+    const button =
+        document.getElementById(
+            "confirmApprovalButton"
+        );
+
+
+    const cancelButton =
+        document.getElementById(
+            "cancelApprovalButton"
+        );
+
+
+    const errorBox =
+        document.getElementById(
+            "modalError"
+        );
+
+
+    const approval =
+        pendingApproval;
+
+
+    button.disabled = true;
+
+    cancelButton.disabled = true;
+
+
+    button.textContent =
+        "Authorizing...";
+
+
+    errorBox.textContent = "";
+
+
     try {
 
-        const response =
+        /*
+         * STEP 1
+         * Human authorizes the bill.
+         */
+
+        const approvalResponse =
             await fetch(
-                `/api/bill/${encodedName}/approve`,
+                `/api/bill/${approval.encodedName}/approve`,
                 {
                     method: "POST"
                 }
             );
 
 
-        if (!response.ok) {
+        if (!approvalResponse.ok) {
 
             throw new Error(
-                "Approval request failed"
+                "LifeOps could not approve this payment."
             );
 
         }
 
 
-        const data =
-            await response.json();
+        const approvalData =
+            await approvalResponse.json();
 
+
+
+        /*
+         * STEP 2
+         * Payment is only attempted after
+         * approval succeeds.
+         */
+
+        button.textContent =
+            "Processing payment...";
+
+
+        const paymentResponse =
+            await fetch(
+                `/api/bill/${approval.encodedName}/pay`,
+                {
+                    method: "POST"
+                }
+            );
+
+
+        if (!paymentResponse.ok) {
+
+            throw new Error(
+                "Approval succeeded, but payment could not be completed."
+            );
+
+        }
+
+
+        const paymentData =
+            await paymentResponse.json();
+
+
+
+        /*
+         * STEP 3
+         * Update activity feed.
+         */
 
         renderActivity(
-            `APPROVED: ${billName}\n${data.result}`
+            `✓ ${approval.billName} — NGN ${Number(
+                approval.amount
+            ).toLocaleString("en-NG")}
+Human approval granted.
+${approvalData.result || ""}
+${paymentData.result || ""}`
         );
 
 
+
+        /*
+         * STEP 4
+         * Close modal and refresh dashboard.
+         */
+
+        closeApprovalModal();
+
+
         showToast(
-            data.result ||
-            `${billName} approved`
+            `${approval.billName} approved and paid successfully`
         );
 
 
@@ -1029,9 +1178,17 @@ async function approveBill(encodedName) {
         console.error(error);
 
 
-        showToast(
-            "Approval request failed"
-        );
+        errorBox.textContent =
+            error.message;
+
+
+        button.disabled = false;
+
+        cancelButton.disabled = false;
+
+
+        button.textContent =
+            "Approve & Pay";
 
     }
 
@@ -1196,11 +1353,7 @@ async function runLifeOps() {
             await response.json();
 
 
-        renderActivity(
-            data.result ||
-            "LifeOps workflow completed."
-        );
-
+        await loadActivityHistory();
 
         showToast(
             "LifeOps workflow completed"
@@ -1274,13 +1427,423 @@ document
     );
 
 
-loadDashboard();
+document
+    .getElementById("confirmApprovalButton")
+    .addEventListener(
+        "click",
+        approveAndPay
+    );
 
+
+document
+    .getElementById("cancelApprovalButton")
+    .addEventListener(
+        "click",
+        closeApprovalModal
+    );
+
+
+document
+    .getElementById("approvalModal")
+    .addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.id === "approvalModal"
+            ) {
+
+                closeApprovalModal();
+
+            }
+
+        }
+    );
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape" &&
+            document
+                .getElementById("approvalModal")
+                .classList.contains("show")
+        ) {
+
+            closeApprovalModal();
+
+        }
+
+    }
+);
+
+
+
+function renderPersistedActivity(events) {
+
+    const container =
+        document.getElementById("activityOutput");
+
+
+    if (!Array.isArray(events) || !events.length) {
+
+        container.innerHTML = `
+
+            <div class="activity-empty">
+
+                <div class="activity-empty-icon">
+                    ◎
+                </div>
+
+                <strong>
+                    No activity yet
+                </strong>
+
+                <p>
+                    Run LifeOps to begin a financial operations cycle.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const normalizedEvents =
+        events.map(event => {
+
+            let type = "info";
+            let icon = "•";
+            let label = "LIFEOPS EVENT";
+            let title =
+                event.bill_name || "LifeOps event";
+
+
+            /* =================================================
+               PAYMENT COMPLETED
+               ================================================= */
+
+            if (
+                event.type === "payment" &&
+                event.status === "COMPLETED"
+            ) {
+
+                type = "success";
+                icon = "✓";
+                label = "PAYMENT";
+                title =
+                    `${event.bill_name} paid`;
+            }
+
+
+            /* =================================================
+               HUMAN APPROVAL REQUIRED
+               ================================================= */
+
+            else if (
+                event.status === "NEEDS_APPROVAL"
+            ) {
+
+                type = "warning";
+                icon = "!";
+                label = "HUMAN REVIEW";
+                title =
+                    `${event.bill_name} requires approval`;
+            }
+
+
+            /* =================================================
+               HUMAN APPROVAL GRANTED
+               ================================================= */
+
+            else if (
+                event.status === "APPROVED"
+            ) {
+
+                type = "success";
+                icon = "✓";
+                label = "HUMAN APPROVAL";
+                title =
+                    `${event.bill_name} approved`;
+            }
+
+
+            /* =================================================
+               AUTOMATIC DECISION
+               ================================================= */
+
+            else if (
+                event.status === "AUTO_HANDLE"
+            ) {
+
+                type = "investigation";
+                icon = "⌕";
+                label = "AUTO DECISION";
+                title =
+                    `${event.bill_name} cleared automatically`;
+            }
+
+
+            /* =================================================
+               BLOCKED
+               ================================================= */
+
+            else if (
+                event.status === "BLOCK" ||
+                event.status === "BLOCKED"
+            ) {
+
+                type = "danger";
+                icon = "×";
+                label = "SAFETY BLOCK";
+                title =
+                    `${event.bill_name} blocked`;
+            }
+
+
+            const amount =
+                event.amount !== null &&
+                event.amount !== undefined
+                    ? formatMoney(
+                        Number(event.amount),
+                        event.currency || "NGN"
+                    )
+                    : "";
+
+
+            let displayTime = "";
+
+            if (event.created_at) {
+
+                const parsedDate =
+                    new Date(
+                        event.created_at
+                            .replace(" ", "T") + "Z"
+                    );
+
+
+                displayTime =
+                    parsedDate.toLocaleString(
+                        "en-NG",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+            }
+
+
+            return {
+                type,
+                icon,
+                label,
+                title,
+                amount,
+                time: displayTime,
+                message:
+                    event.message ||
+                    "LifeOps event recorded.",
+                reference:
+                    event.reference || ""
+            };
+
+        });
+
+
+    container.innerHTML = `
+
+        <div class="activity-timeline">
+
+            ${normalizedEvents.map(
+                (event, index) => `
+
+                <div class="activity-event">
+
+
+                    <div class="activity-timeline-column">
+
+
+                        <div
+                            class="activity-icon ${event.type}"
+                        >
+                            ${escapeHtml(event.icon)}
+                        </div>
+
+
+                        ${
+                            index <
+                            normalizedEvents.length - 1
+                                ? `
+                                    <div
+                                        class="activity-line"
+                                    ></div>
+                                `
+                                : ""
+                        }
+
+
+                    </div>
+
+
+
+                    <div class="activity-card">
+
+
+                        <div class="activity-card-top">
+
+
+                            <div class="activity-card-heading">
+
+
+                                <span
+                                    class="activity-label ${event.type}"
+                                >
+                                    ${escapeHtml(event.label)}
+                                </span>
+
+
+                                <h4>
+                                    ${escapeHtml(event.title)}
+                                </h4>
+
+
+                            </div>
+
+
+
+                            <div class="activity-card-meta">
+
+
+                                ${
+                                    event.amount
+                                        ? `
+                                            <strong
+                                                class="activity-amount"
+                                            >
+                                                ${escapeHtml(event.amount)}
+                                            </strong>
+                                        `
+                                        : ""
+                                }
+
+
+                                <span class="activity-time">
+                                    ${escapeHtml(event.time)}
+                                </span>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <p class="activity-message">
+                            ${escapeHtml(event.message)}
+                        </p>
+
+
+                        ${
+                            event.reference
+                                ? `
+                                    <div
+                                        class="activity-reference"
+                                        style="
+                                            margin-top: 8px;
+                                            font-size: 10px;
+                                            color: #94a3b8;
+                                        "
+                                    >
+                                        Transaction:
+                                        ${escapeHtml(event.reference)}
+                                    </div>
+                                `
+                                : ""
+                        }
+
+
+                    </div>
+
+
+                </div>
+
+            `).join("")}
+
+
+        </div>
+
+    `;
+
+}
+
+
+
+
+
+
+
+
+async function loadActivityHistory() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/activity`
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Failed to load activity history"
+            );
+        }
+
+        const data =
+            await response.json();
+
+        renderPersistedActivity(
+            data.activity || []
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        document
+            .getElementById(
+                "activityOutput"
+            )
+            .innerHTML = `
+                <div class="activity-empty">
+                    <div class="activity-empty-icon">!</div>
+                    <strong>Unable to load activity</strong>
+                    <p>
+                        LifeOps could not retrieve persisted activity history.
+                    </p>
+                </div>
+            `;
+    }
+}
+
+
+
+loadDashboard();
+loadActivityHistory();
 
 
 /* Refresh dashboard every 15 seconds */
 
 setInterval(
-    loadDashboard,
+    () => {
+        loadDashboard();
+        loadActivityHistory();
+    },
     15000
 );
