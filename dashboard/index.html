@@ -1,215 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>LifeOps Dashboard</title>
 
-    <link rel="stylesheet" href="/dashboard/styles.css">
+    <link
+        rel="stylesheet"
+        href="/dashboard/styles.css?v=7"
+    >
+
 </head>
+
 
 <body>
 
+
 <div class="app">
 
-    <!-- SIDEBAR -->
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <aside class="sidebar">
 
+
         <div class="brand">
-            <div class="brand-icon">L</div>
+
+            <div class="brand-icon">
+                L
+            </div>
 
             <div>
-                <h1>LifeOps</h1>
-                <span>Personal Operations</span>
+
+                <h1>
+                    LifeOps
+                </h1>
+
+                <span>
+                    Personal Operations
+                </span>
+
             </div>
+
         </div>
+
 
         <nav>
-            <a href="#" class="nav-item active">
-                <span>▦</span>
+
+            <a
+                href="#"
+                class="nav-item active"
+            >
+
+                <span>◈</span>
+
                 Dashboard
+
             </a>
 
-            <a href="#bills" class="nav-item">
-                <span>◷</span>
+
+            <a
+                href="#bills"
+                class="nav-item"
+            >
+
+                <span>▣</span>
+
                 Bills
+
             </a>
 
-            <a href="#activity" class="nav-item">
+
+            <a
+                href="#activity"
+                class="nav-item"
+            >
+
                 <span>↻</span>
+
                 Activity
+
             </a>
+
         </nav>
 
+
         <div class="sidebar-footer">
+
             <div class="system-status">
+
                 <span class="status-dot"></span>
+
                 <div>
-                    <strong>System Online</strong>
-                    <small>LifeOps API connected</small>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <small>
+                        LifeOps API connected
+                    </small>
+
                 </div>
+
             </div>
+
         </div>
+
 
     </aside>
 
 
-    <!-- MAIN -->
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
     <main class="main">
 
+
         <!-- HEADER -->
+
         <header class="topbar">
 
             <div>
-                <p class="eyebrow">OPERATIONS CENTER</p>
-                <h2>Good evening</h2>
-                <p class="subtitle">
-                    Here's what's happening with your financial operations.
+
+                <p class="eyebrow">
+                    OPERATIONS CENTER
                 </p>
+
+                <h2>
+                    LifeOps Dashboard
+                </h2>
+
+                <p class="subtitle">
+                    Autonomous financial operations and payment safety.
+                </p>
+
             </div>
 
-            <button id="runButton" class="primary-button">
+
+            <button
+                id="runButton"
+                class="primary-button"
+            >
+
                 <span>▶</span>
+
                 Run LifeOps
+
             </button>
 
         </header>
 
 
-        <!-- STATS -->
+
+        <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
         <section class="stats-grid">
 
+
             <div class="stat-card">
+
                 <div class="stat-header">
-                    <span>Total Bills</span>
-                    <div class="stat-icon">▦</div>
+
+                    <span>
+                        Total Bills
+                    </span>
+
+                    <div class="stat-icon">
+                        ◈
+                    </div>
+
                 </div>
 
-                <strong id="totalBills">—</strong>
 
-                <small>Tracked obligations</small>
+                <strong id="totalBills">
+                    —
+                </strong>
+
+
+                <small>
+                    Tracked obligations
+                </small>
+
             </div>
 
 
+
             <div class="stat-card">
+
                 <div class="stat-header">
-                    <span>Total Paid</span>
-                    <div class="stat-icon success">✓</div>
+
+                    <span>
+                        Total Paid
+                    </span>
+
+                    <div class="stat-icon success">
+                        ✓
+                    </div>
+
                 </div>
 
-                <strong id="totalPaid">—</strong>
 
-                <small id="paidCount">— paid bills</small>
+                <strong id="totalPaid">
+                    —
+                </strong>
+
+
+                <small id="paidCount">
+                    — paid bills
+                </small>
+
             </div>
+
 
 
             <div class="stat-card warning-card">
+
                 <div class="stat-header">
-                    <span>Awaiting Approval</span>
-                    <div class="stat-icon warning">!</div>
+
+                    <span>
+                        Awaiting Approval
+                    </span>
+
+                    <div class="stat-icon warning">
+                        !
+                    </div>
+
                 </div>
 
-                <strong id="approvalAmount">—</strong>
 
-                <small id="approvalCount">— bills require attention</small>
+                <strong id="approvalAmount">
+                    —
+                </strong>
+
+
+                <small id="approvalCount">
+                    — bills require attention
+                </small>
+
             </div>
+
 
 
             <div class="stat-card">
+
                 <div class="stat-header">
-                    <span>Blocked</span>
-                    <div class="stat-icon danger">×</div>
+
+                    <span>
+                        Blocked
+                    </span>
+
+                    <div class="stat-icon danger">
+                        ×
+                    </div>
+
                 </div>
 
-                <strong id="blockedAmount">—</strong>
 
-                <small id="blockedCount">— blocked bills</small>
+                <strong id="blockedAmount">
+                    —
+                </strong>
+
+
+                <small id="blockedCount">
+                    — blocked bills
+                </small>
+
             </div>
+
 
         </section>
 
 
-        <!-- BILLS -->
-        <section class="panel" id="bills">
+
+        <!-- =================================================
+             BILLS
+             ================================================= -->
+
+        <section
+            class="panel"
+            id="bills"
+        >
+
 
             <div class="panel-header">
 
                 <div>
-                    <h3>Financial Obligations</h3>
-                    <p>Current status of all tracked bills</p>
+
+                    <h3>
+                        Financial Obligations
+                    </h3>
+
+                    <p>
+                        Current status of all tracked bills
+                    </p>
+
                 </div>
 
-                <button class="refresh-button" onclick="loadDashboard()">
+
+                <button
+                    class="refresh-button"
+                    onclick="loadDashboard()"
+                >
+
                     ↻ Refresh
+
                 </button>
 
             </div>
 
 
+
             <div class="table-wrapper">
+
 
                 <table>
 
+
                     <thead>
+
                         <tr>
-                            <th>Bill</th>
-                            <th>Amount</th>
-                            <th>Due Date</th>
-                            <th>Decision</th>
-                            <th>Status</th>
-                            <th>Action</th>
+
+                            <th>
+                                Bill
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Due Date
+                            </th>
+
+                            <th>
+                                Decision
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
                         </tr>
+
                     </thead>
+
+
 
                     <tbody id="billsTable">
 
                         <tr>
-                            <td colspan="6" class="loading">
+
+                            <td
+                                colspan="6"
+                                class="loading"
+                            >
+
                                 Loading LifeOps data...
+
                             </td>
+
                         </tr>
 
                     </tbody>
 
+
                 </table>
 
+
             </div>
+
 
         </section>
 
 
-        <!-- ACTIVITY -->
-        <section class="panel activity-panel" id="activity">
 
-            <div class="panel-header">
+        <!-- =================================================
+             ACTIVITY
+             ================================================= -->
+
+        <section
+            class="panel activity-panel"
+            id="activity"
+        >
+
+
+            <div class="panel-header activity-panel-header">
+
 
                 <div>
-                    <h3>LifeOps Activity</h3>
-                    <p>Latest workflow output</p>
+
+                    <p class="activity-eyebrow">
+                        AGENT AUDIT TRAIL
+                    </p>
+
+                    <h3>
+                        LifeOps Activity
+                    </h3>
+
+                    <p>
+                        Autonomous actions, decisions and payment events
+                    </p>
+
                 </div>
 
-                <span class="live-label">
-                    <span class="status-dot"></span>
+
+
+                <div class="activity-live">
+
+                    <span class="activity-live-dot"></span>
+
                     LIVE
-                </span>
+
+                </div>
+
 
             </div>
 
-            <pre id="activityOutput">Waiting for LifeOps...</pre>
+
+
+            <div
+                id="activityOutput"
+                class="activity-feed"
+            >
+
+
+                <div class="activity-empty">
+
+                    <div class="activity-empty-icon">
+                        ◎
+                    </div>
+
+                    <strong>
+                        No activity yet
+                    </strong>
+
+                    <p>
+                        Run LifeOps to begin a financial operations cycle.
+                    </p>
+
+                </div>
+
+
+            </div>
+
 
         </section>
 
+
     </main>
+
 
 </div>
 
 
-<!-- TOAST -->
-<div id="toast" class="toast"></div>
+
+<!-- =========================================================
+     TOAST
+     ========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
 
 
-<script src="/dashboard/app.js"></script>
+
+<script src="/dashboard/app.js?v=7"></script>
+
 
 </body>
+
 </html>
