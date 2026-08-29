@@ -14,7 +14,7 @@
 
     <link
         rel="stylesheet"
-        href="/dashboard/styles.css?v=8"
+        href="/dashboard/styles.css?v=10"
     >
 
 </head>
@@ -556,6 +556,92 @@
 </div>
 
 
+<!-- =========================================================
+     BILL DETAIL DRAWER
+     ========================================================= -->
+
+<div id="billDetailOverlay" class="bill-detail-overlay">
+
+    <aside
+        id="billDetailDrawer"
+        class="bill-detail-drawer"
+        aria-label="Bill details"
+    >
+
+        <!-- HEADER -->
+
+        <div class="bill-detail-header">
+
+            <div>
+
+                <p class="bill-detail-eyebrow">
+                    LIFEOPS EXPLAINABILITY
+                </p>
+
+                <h3 id="detailBillName">
+                    Bill Details
+                </h3>
+
+                <p id="detailBillCategory">
+                    Financial obligation
+                </p>
+
+            </div>
+
+            <button
+                id="closeBillDetailButton"
+                class="bill-detail-close"
+                type="button"
+                aria-label="Close bill details"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- DRAWER CONTENT -->
+
+        <div
+            id="billDetailContent"
+            class="bill-detail-content"
+        >
+
+            <div class="bill-detail-loading">
+
+                <span class="activity-spinner"></span>
+
+                <div>
+
+                    <strong>
+                        Loading bill details
+                    </strong>
+
+                    <p>
+                        Retrieving LifeOps decision history...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- =========================================================
      TOAST
@@ -566,7 +652,7 @@
 
 
 
-<script src="/dashboard/app.js?v=11"></script>
+<script src="/dashboard/app.js?v=13"></script>
 
 
 </body>

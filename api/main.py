@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 from api.activity import get_activity_history
+from api.bill_details import get_bill_details
 
 from agent.orchestrator import run_lifeops
 from agent.action_router import (
@@ -133,3 +134,16 @@ def activity():
     return {
         "activity": get_activity_history()
     }
+
+
+@app.get("/api/bill/{bill_name}/details")
+def bill_details(bill_name: str):
+
+    details = get_bill_details(bill_name)
+
+    if details is None:
+        return {
+            "error": f"No bill named '{bill_name}' was found."
+        }
+
+    return details
