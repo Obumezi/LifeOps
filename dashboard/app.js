@@ -488,6 +488,424 @@ function updateSummary(summary = {}) {
 
 
 /* ============================================================
+   LIFEOPS INTELLIGENCE
+   ============================================================ */
+
+function updateIntelligence(
+    summary = {},
+    bills = []
+) {
+    const title =
+        document.getElementById(
+            "intelligenceTitle"
+        );
+
+    const health =
+        document.getElementById(
+            "intelligenceHealth"
+        );
+
+    const message =
+        document.getElementById(
+            "intelligenceMessage"
+        );
+
+    const processed =
+        document.getElementById(
+            "intelligenceProcessed"
+        );
+
+    const resolved =
+        document.getElementById(
+            "intelligenceResolved"
+        );
+
+    const attention =
+        document.getElementById(
+            "intelligenceAttention"
+        );
+
+
+    if (
+        !title ||
+        !health ||
+        !message ||
+        !processed ||
+        !resolved ||
+        !attention
+    ) {
+        return;
+    }
+
+
+    const totalBills =
+        Number(
+            summary.total_bills || 0
+        );
+
+    const totalPaid =
+        Number(
+            summary.total_paid || 0
+        );
+
+    const approvalCount =
+        Number(
+            summary.approval_count || 0
+        );
+
+    const blockedCount =
+        Number(
+            summary.blocked_count || 0
+        );
+
+
+    const paidCount =
+        bills.filter(
+            bill =>
+                bill.status === "paid" &&
+                bill.payment_status ===
+                    "COMPLETED"
+        ).length;
+
+
+    const autoHandledCount =
+        bills.filter(
+            bill =>
+                bill.decision ===
+                "AUTO_HANDLE"
+        ).length;
+
+
+    const approvalRequiredCount =
+        bills.filter(
+            bill =>
+                bill.decision ===
+                "NEEDS_APPROVAL"
+        ).length;
+
+
+    const approvedCount =
+        bills.filter(
+            bill =>
+                bill.decision ===
+                "APPROVED"
+        ).length;
+
+
+    const resolvedCount =
+        paidCount;
+
+
+    const attentionCount =
+        approvalCount +
+        blockedCount;
+
+
+    processed.textContent =
+        formatMoney(totalPaid);
+
+
+    resolved.textContent =
+        `${resolvedCount}/${totalBills}`;
+
+
+    attention.textContent =
+        attentionCount;
+
+
+    /*
+     * Reset health badge classes
+     */
+
+    health.classList.remove(
+        "healthy",
+        "warning",
+        "danger"
+    );
+
+
+    /*
+     * BLOCKED STATE
+     */
+
+    if (blockedCount > 0) {
+        title.textContent =
+            "LifeOps detected blocked obligations";
+
+        health.textContent =
+            "ACTION REQUIRED";
+
+        health.classList.add(
+            "danger"
+        );
+
+
+        message.textContent =
+            `LifeOps reviewed ${totalBills} financial obligation${
+                totalBills === 1 ? "" : "s"
+            }. ${blockedCount} ${
+                blockedCount === 1
+                    ? "payment was"
+                    : "payments were"
+            } blocked by safety controls and require attention.`;
+
+        return;
+    }
+
+
+    /*
+     * HUMAN APPROVAL REQUIRED
+     */
+
+    if (
+        approvalCount > 0 ||
+        approvalRequiredCount > 0
+    ) {
+        title.textContent =
+            "Human authorization required";
+
+        health.textContent =
+            "ATTENTION";
+
+        health.classList.add(
+            "warning"
+        );
+
+
+        message.textContent =
+            `LifeOps reviewed ${totalBills} financial obligation${
+                totalBills === 1 ? "" : "s"
+            }. ${autoHandledCount} ${
+                autoHandledCount === 1
+                    ? "passed"
+                    : "passed"
+            } automatic safety checks, while ${Math.max(
+                approvalCount,
+                approvalRequiredCount
+            )} ${
+                Math.max(
+                    approvalCount,
+                    approvalRequiredCount
+                ) === 1
+                    ? "requires"
+                    : "require"
+            } human authorization before payment.`;
+
+        return;
+    }
+
+
+    /*
+     * EVERYTHING RESOLVED
+     */
+
+    if (
+        totalBills > 0 &&
+        resolvedCount === totalBills
+    ) {
+        title.textContent =
+            "All obligations handled";
+
+        health.textContent =
+            "HEALTHY";
+
+        health.classList.add(
+            "healthy"
+        );
+
+
+        message.textContent =
+            `LifeOps reviewed ${totalBills} financial obligation${
+                totalBills === 1 ? "" : "s"
+            }. All obligations have been resolved successfully. ${
+                autoHandledCount > 0
+                    ? `${autoHandledCount} ${
+                        autoHandledCount === 1
+                            ? "was"
+                            : "were"
+                    } cleared automatically through LifeOps safety checks.`
+                    : ""
+            } ${
+                approvedCount > 0
+                    ? `${approvedCount} ${
+                        approvedCount === 1
+                            ? "required"
+                            : "required"
+                    } human authorization before payment.`
+                    : ""
+            }`;
+
+        return;
+    }
+
+
+    /*
+     * DEFAULT / PENDING STATE
+     */
+
+    title.textContent =
+        "Financial operations in progress";
+
+    health.textContent =
+        "MONITORING";
+
+    health.classList.add(
+        "warning"
+    );
+
+
+    message.textContent =
+        `LifeOps is tracking ${totalBills} financial obligation${
+            totalBills === 1 ? "" : "s"
+        }. ${resolvedCount} ${
+            resolvedCount === 1
+                ? "has"
+                : "have"
+        } been resolved so far.`;
+}
+
+/* ============================================================
+   API HEALTH STATUS
+   ============================================================ */
+
+async function checkApiHealth() {
+
+    const status =
+        document.getElementById(
+            "systemStatus"
+        );
+
+    const dot =
+        document.getElementById(
+            "systemStatusDot"
+        );
+
+    const title =
+        document.getElementById(
+            "systemStatusTitle"
+        );
+
+    const message =
+        document.getElementById(
+            "systemStatusMessage"
+        );
+
+
+    if (
+        !status ||
+        !dot ||
+        !title ||
+        !message
+    ) {
+        return false;
+    }
+
+
+    /*
+     * Reset previous state.
+     */
+
+    status.classList.remove(
+        "online",
+        "offline",
+        "checking"
+    );
+
+    status.classList.add(
+        "checking"
+    );
+
+
+    title.textContent =
+        "Checking system...";
+
+    message.textContent =
+        "Connecting to LifeOps API";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/health",
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+            throw new Error(
+                `Health check returned ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+         * The HTTP response itself confirms that
+         * the LifeOps API is reachable.
+         */
+
+        status.classList.remove(
+            "checking",
+            "offline"
+        );
+
+        status.classList.add(
+            "online"
+        );
+
+
+        title.textContent =
+            "System Online";
+
+
+        message.textContent =
+            "LifeOps API connected";
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "LifeOps health check failed:",
+            error
+        );
+
+
+        status.classList.remove(
+            "checking",
+            "online"
+        );
+
+        status.classList.add(
+            "offline"
+        );
+
+
+        title.textContent =
+            "System Offline";
+
+
+        message.textContent =
+            "LifeOps API unavailable";
+
+
+        return false;
+    }
+}
+
+
+
+
+/* ============================================================
    LOAD DASHBOARD
    ============================================================ */
 
@@ -507,13 +925,18 @@ async function loadDashboard() {
         const data =
             await response.json();
 
-        updateSummary(
-            data.summary || {}
-        );
+       updateSummary(
+    data.summary || {}
+);
 
-        renderBills(
-            data.bills || []
-        );
+renderBills(
+    data.bills || []
+);
+
+updateIntelligence(
+    data.summary || {},
+    data.bills || []
+);
 
     } catch (error) {
         console.error(
@@ -2249,6 +2672,8 @@ function initializeEventListeners() {
 
 initializeEventListeners();
 
+checkApiHealth();
+
 loadDashboard();
 
 loadActivityHistory();
@@ -2260,6 +2685,8 @@ loadActivityHistory();
 
 setInterval(
     async () => {
+
+        await checkApiHealth();
 
         await loadDashboard();
 

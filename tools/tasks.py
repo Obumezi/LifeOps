@@ -12,7 +12,8 @@ def get_upcoming_tasks() -> str:
     Retrieve the user's upcoming routine tasks from the LifeOps database.
 
     Returns:
-        A formatted list of pending tasks.
+        A formatted list of pending tasks including the authoritative
+        database task ID for each obligation.
     """
 
     connection = sqlite3.connect(DATABASE_PATH)
@@ -20,7 +21,7 @@ def get_upcoming_tasks() -> str:
 
     cursor.execute(
         """
-        SELECT name, category, amount, currency, due_date
+        SELECT id, name, category, amount, currency, due_date
         FROM tasks
         WHERE status = 'pending'
         ORDER BY due_date ASC
@@ -36,9 +37,10 @@ def get_upcoming_tasks() -> str:
 
     results = []
 
-    for name, category, amount, currency, due_date in tasks:
+    for task_id, name, category, amount, currency, due_date in tasks:
         results.append(
-            f"{name} | "
+            f"Task ID: {task_id} | "
+            f"Name: {name} | "
             f"Category: {category} | "
             f"Amount: {currency} {amount:,} | "
             f"Due: {due_date}"

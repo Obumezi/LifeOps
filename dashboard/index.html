@@ -14,7 +14,7 @@
 
     <link
         rel="stylesheet"
-        href="/dashboard/styles.css?v=10"
+        href="/dashboard/styles.css?v=12"
     >
 
 </head>
@@ -94,27 +94,29 @@
         </nav>
 
 
-        <div class="sidebar-footer">
+        <div
+    id="systemStatus"
+    class="system-status"
+>
 
-            <div class="system-status">
+    <span
+        id="systemStatusDot"
+        class="status-dot"
+    ></span>
 
-                <span class="status-dot"></span>
+    <div>
 
-                <div>
+        <strong id="systemStatusTitle">
+            Checking system...
+        </strong>
 
-                    <strong>
-                        System Online
-                    </strong>
+        <small id="systemStatusMessage">
+            Connecting to LifeOps API
+        </small>
 
-                    <small>
-                        LifeOps API connected
-                    </small>
+    </div>
 
-                </div>
-
-            </div>
-
-        </div>
+</div>
 
 
     </aside>
@@ -281,6 +283,119 @@
 
             </div>
 
+
+                </section>
+
+
+        <!-- =================================================
+             LIFEOPS INTELLIGENCE
+             ================================================= -->
+
+        <section
+            id="intelligence"
+            class="intelligence-panel"
+        >
+
+            <div class="intelligence-main">
+
+                <div class="intelligence-icon">
+                    ◈
+                </div>
+
+
+                <div class="intelligence-content">
+
+                    <div class="intelligence-heading">
+
+                        <div>
+
+                            <p class="intelligence-eyebrow">
+                                LIFEOPS INTELLIGENCE
+                            </p>
+
+                            <h3 id="intelligenceTitle">
+                                Analysing financial operations...
+                            </h3>
+
+                        </div>
+
+
+                        <span
+                            id="intelligenceHealth"
+                            class="intelligence-health"
+                        >
+                            CHECKING
+                        </span>
+
+                    </div>
+
+
+                    <p
+                        id="intelligenceMessage"
+                        class="intelligence-message"
+                    >
+                        LifeOps is evaluating your financial obligations
+                        and safety decisions.
+                    </p>
+
+
+                    <div class="intelligence-metrics">
+
+                        <div class="intelligence-metric">
+
+                            <span>
+                                PROCESSED
+                            </span>
+
+                            <strong id="intelligenceProcessed">
+                                —
+                            </strong>
+
+                            <small>
+                                value handled
+                            </small>
+
+                        </div>
+
+
+                        <div class="intelligence-metric">
+
+                            <span>
+                                RESOLVED
+                            </span>
+
+                            <strong id="intelligenceResolved">
+                                —
+                            </strong>
+
+                            <small>
+                                obligations
+                            </small>
+
+                        </div>
+
+
+                        <div class="intelligence-metric">
+
+                            <span>
+                                ATTENTION
+                            </span>
+
+                            <strong id="intelligenceAttention">
+                                —
+                            </strong>
+
+                            <small>
+                                requiring action
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -632,17 +747,6 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
 <!-- =========================================================
      TOAST
      ========================================================= -->
@@ -652,7 +756,7 @@
 
 
 
-<script src="/dashboard/app.js?v=13"></script>
+<script src="/dashboard/app.js?v=15"></script>
 
 
 </body>
