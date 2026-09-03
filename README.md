@@ -2,6 +2,10 @@
 
 > **An autonomous AI agent for managing routine financial obligations safely, escalating only when human judgment is required.**
 
+### 🚀 [Launch the Live Demo](https://lifeops-qyit.onrender.com/)
+
+**Live Demo:** https://lifeops-qyit.onrender.com/
+
 LifeOps is an AI-powered financial operations agent built with **Strands Agents, Amazon Bedrock, Amazon Bedrock AgentCore, FastAPI, and SQLite**.
 
 Instead of simply reminding a user that a bill is due, LifeOps investigates the obligation, reviews historical spending, evaluates deterministic safety policies, decides whether the obligation can be handled automatically, executes approved payments, and escalates unusual or high-value transactions for human approval.
