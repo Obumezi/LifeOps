@@ -603,7 +603,7 @@ The project was developed and tested using Python 3.14.
 Clone the repository:
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/Obumezi/LifeOps.git
 cd LIFEOPS
 ```
 
