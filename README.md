@@ -300,6 +300,13 @@ Checking
 
 # 5. Architecture
 
+## Architecture Diagram
+
+
+![LifeOps Architecture](docs/lifeops-architecture.png)
+
+
+
 LifeOps uses a layered architecture.
 
 ```text
