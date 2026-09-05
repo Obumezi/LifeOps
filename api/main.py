@@ -1,3 +1,5 @@
+import sqlite3
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -103,6 +105,40 @@ def run():
     return {
         "result": run_lifeops()
     }
+
+
+@app.post("/api/reset")
+def reset_demo():
+    db_path = BASE_DIR / "database" / "lifeops.db"
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM agent_decisions")
+    cursor.execute("DELETE FROM payment_transactions")
+
+    cursor.execute("""
+        UPDATE tasks
+        SET status = 'pending'
+    """)
+
+    conn.commit()
+    conn.close()
+
+    return {
+        "status": "reset",
+        "message": "LifeOps demo reset successfully."
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 # ============================================================

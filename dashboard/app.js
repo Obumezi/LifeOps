@@ -2383,6 +2383,79 @@ async function loadActivityHistory() {
     }
 }
 
+/* ============================================================
+   RESET DEMO
+   ============================================================ */
+
+async function resetDemo() {
+    const button =
+        document.getElementById(
+            "resetButton"
+        );
+
+    const confirmed =
+        confirm(
+            "Reset the LifeOps demo? This will return all bills to pending and clear decisions and simulated payments."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Resetting...";
+
+    try {
+        const response =
+            await fetch(
+                `${API}/reset`,
+                {
+                    method: "POST"
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "LifeOps demo reset failed"
+            );
+        }
+
+        closeApprovalModal();
+        closeBillDetails();
+
+        pendingApproval = null;
+
+        await loadDashboard();
+        await loadActivityHistory();
+
+        showToast(
+            "LifeOps demo reset successfully"
+        );
+
+    } catch (error) {
+        console.error(
+            "Reset demo error:",
+            error
+        );
+
+        showToast(
+            "Unable to reset LifeOps demo"
+        );
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "↻ Reset Demo";
+    }
+}
+
+
+
+
+
+
+
+
+
 
 /* ============================================================
    RUN LIFEOPS
@@ -2527,6 +2600,22 @@ function initializeEventListeners() {
             runLifeOps
         );
     }
+
+    /*
+ * Reset Demo
+ */
+
+const resetButton =
+    document.getElementById(
+        "resetButton"
+    );
+
+if (resetButton) {
+    resetButton.addEventListener(
+        "click",
+        resetDemo
+    );
+}
 
 
     /*

@@ -3278,3 +3278,94 @@ body.bill-detail-open {
 }
 
 
+/* ============================================================
+   TOPBAR ACTIONS
+   ============================================================ */
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* ============================================================
+   RESET DEMO BUTTON
+   ============================================================ */
+
+.reset-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 44px;
+    padding: 0 18px;
+
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #475569;
+
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.reset-button:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+
+    box-shadow:
+        0 4px 12px rgba(15, 23, 42, 0.08);
+
+    transform: translateY(-1px);
+}
+
+
+.reset-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+
+.reset-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.reset-button span {
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .topbar-actions {
+        width: 100%;
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .topbar-actions button {
+        width: 100%;
+    }
+}

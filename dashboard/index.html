@@ -5,17 +5,11 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>LifeOps Dashboard</title>
 
-    <link
-        rel="stylesheet"
-        href="/dashboard/styles.css?v=12"
-    >
+    <link rel="stylesheet" href="/dashboard/styles.css?v=13">
 
 </head>
 
@@ -23,740 +17,691 @@
 <body>
 
 
-<div class="app">
+    <div class="app">
 
 
-    <!-- =====================================================
+        <!-- =====================================================
          SIDEBAR
          ===================================================== -->
 
-    <aside class="sidebar">
+        <aside class="sidebar">
 
 
-        <div class="brand">
+            <div class="brand">
 
-            <div class="brand-icon">
-                L
+                <div class="brand-icon">
+                    L
+                </div>
+
+                <div>
+
+                    <h1>
+                        LifeOps
+                    </h1>
+
+                    <span>
+                        Personal Operations
+                    </span>
+
+                </div>
+
             </div>
 
-            <div>
 
-                <h1>
-                    LifeOps
-                </h1>
+            <nav>
 
-                <span>
-                    Personal Operations
+                <a href="#" class="nav-item active">
+
+                    <span>◈</span>
+
+                    Dashboard
+
+                </a>
+
+
+                <a href="#bills" class="nav-item">
+
+                    <span>▣</span>
+
+                    Bills
+
+                </a>
+
+
+                <a href="#activity" class="nav-item">
+
+                    <span>↻</span>
+
+                    Activity
+
+                </a>
+
+            </nav>
+
+
+            <div id="systemStatus" class="system-status">
+
+                <span id="systemStatusDot" class="status-dot"></span>
+
+                <div>
+
+                    <strong id="systemStatusTitle">
+                        Checking system...
+                    </strong>
+
+                    <small id="systemStatusMessage">
+                        Connecting to LifeOps API
+                    </small>
+
+                </div>
+
+            </div>
+
+
+        </aside>
+
+
+
+        <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+        <main class="main">
+
+
+            <!-- HEADER -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="eyebrow">
+                        OPERATIONS CENTER
+                    </p>
+
+                    <h2>
+                        LifeOps Dashboard
+                    </h2>
+
+                    <p class="subtitle">
+                        Autonomous financial operations and payment safety.
+                    </p>
+
+                </div>
+
+
+                <div class="topbar-actions">
+
+    <button
+        id="resetButton"
+        class="reset-button"
+        type="button"
+    >
+        <span>↻</span>
+        Reset Demo
+    </button>
+
+    <button
+        id="runButton"
+        class="primary-button"
+        type="button"
+    >
+        <span>▶</span>
+        Run LifeOps
+    </button>
+
+</div>
+            </header>
+
+
+
+            <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
+            <section class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-header">
+
+                        <span>
+                            Total Bills
+                        </span>
+
+                        <div class="stat-icon">
+                            ◈
+                        </div>
+
+                    </div>
+
+
+                    <strong id="totalBills">
+                        —
+                    </strong>
+
+
+                    <small>
+                        Tracked obligations
+                    </small>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-header">
+
+                        <span>
+                            Total Paid
+                        </span>
+
+                        <div class="stat-icon success">
+                            ✓
+                        </div>
+
+                    </div>
+
+
+                    <strong id="totalPaid">
+                        —
+                    </strong>
+
+
+                    <small id="paidCount">
+                        — paid bills
+                    </small>
+
+                </div>
+
+
+
+                <div class="stat-card warning-card">
+
+                    <div class="stat-header">
+
+                        <span>
+                            Awaiting Approval
+                        </span>
+
+                        <div class="stat-icon warning">
+                            !
+                        </div>
+
+                    </div>
+
+
+                    <strong id="approvalAmount">
+                        —
+                    </strong>
+
+
+                    <small id="approvalCount">
+                        — bills require attention
+                    </small>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-header">
+
+                        <span>
+                            Blocked
+                        </span>
+
+                        <div class="stat-icon danger">
+                            ×
+                        </div>
+
+                    </div>
+
+
+                    <strong id="blockedAmount">
+                        —
+                    </strong>
+
+
+                    <small id="blockedCount">
+                        — blocked bills
+                    </small>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+             LIFEOPS INTELLIGENCE
+             ================================================= -->
+
+            <section id="intelligence" class="intelligence-panel">
+
+                <div class="intelligence-main">
+
+                    <div class="intelligence-icon">
+                        ◈
+                    </div>
+
+
+                    <div class="intelligence-content">
+
+                        <div class="intelligence-heading">
+
+                            <div>
+
+                                <p class="intelligence-eyebrow">
+                                    LIFEOPS INTELLIGENCE
+                                </p>
+
+                                <h3 id="intelligenceTitle">
+                                    Analysing financial operations...
+                                </h3>
+
+                            </div>
+
+
+                            <span id="intelligenceHealth" class="intelligence-health">
+                                CHECKING
+                            </span>
+
+                        </div>
+
+
+                        <p id="intelligenceMessage" class="intelligence-message">
+                            LifeOps is evaluating your financial obligations
+                            and safety decisions.
+                        </p>
+
+
+                        <div class="intelligence-metrics">
+
+                            <div class="intelligence-metric">
+
+                                <span>
+                                    PROCESSED
+                                </span>
+
+                                <strong id="intelligenceProcessed">
+                                    —
+                                </strong>
+
+                                <small>
+                                    value handled
+                                </small>
+
+                            </div>
+
+
+                            <div class="intelligence-metric">
+
+                                <span>
+                                    RESOLVED
+                                </span>
+
+                                <strong id="intelligenceResolved">
+                                    —
+                                </strong>
+
+                                <small>
+                                    obligations
+                                </small>
+
+                            </div>
+
+
+                            <div class="intelligence-metric">
+
+                                <span>
+                                    ATTENTION
+                                </span>
+
+                                <strong id="intelligenceAttention">
+                                    —
+                                </strong>
+
+                                <small>
+                                    requiring action
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+             BILLS
+             ================================================= -->
+
+            <section class="panel" id="bills">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h3>
+                            Financial Obligations
+                        </h3>
+
+                        <p>
+                            Current status of all tracked bills
+                        </p>
+
+                    </div>
+
+
+                    <button class="refresh-button" onclick="loadDashboard()">
+
+                        ↻ Refresh
+
+                    </button>
+
+                </div>
+
+
+
+                <div class="table-wrapper">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Bill
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Due Date
+                                </th>
+
+                                <th>
+                                    Decision
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+
+                        <tbody id="billsTable">
+
+                            <tr>
+
+                                <td colspan="6" class="loading">
+
+                                    Loading LifeOps data...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+             ACTIVITY
+             ================================================= -->
+
+            <section class="panel activity-panel" id="activity">
+
+
+                <div class="panel-header activity-panel-header">
+
+
+                    <div>
+
+                        <p class="activity-eyebrow">
+                            AGENT AUDIT TRAIL
+                        </p>
+
+                        <h3>
+                            LifeOps Activity
+                        </h3>
+
+                        <p>
+                            Autonomous actions, decisions and payment events
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="activity-live">
+
+                        <span class="activity-live-dot"></span>
+
+                        LIVE
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div id="activityOutput" class="activity-feed">
+
+
+                    <div class="activity-empty">
+
+                        <div class="activity-empty-icon">
+                            ◎
+                        </div>
+
+                        <strong>
+                            No activity yet
+                        </strong>
+
+                        <p>
+                            Run LifeOps to begin a financial operations cycle.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
+
+    <!-- =========================================================
+     APPROVAL MODAL
+     ========================================================= -->
+
+    <div id="approvalModal" class="modal-overlay">
+
+        <div class="approval-modal">
+
+            <div class="modal-icon">
+                !
+            </div>
+
+            <div class="modal-heading">
+
+                <p class="modal-eyebrow">
+                    HUMAN APPROVAL REQUIRED
+                </p>
+
+                <h3>
+                    Review Payment
+                </h3>
+
+                <p>
+                    LifeOps paused this payment because it requires your authorization.
+                </p>
+
+            </div>
+
+
+            <div class="approval-details">
+
+                <div class="approval-detail-row">
+                    <span>Bill</span>
+                    <strong id="modalBillName">—</strong>
+                </div>
+
+                <div class="approval-detail-row">
+                    <span>Amount</span>
+                    <strong id="modalBillAmount">—</strong>
+                </div>
+
+            </div>
+
+
+            <div class="approval-reason">
+
+                <span class="reason-label">
+                    WHY LIFEOPS FLAGGED THIS
                 </span>
+
+                <p id="modalReason">
+                    This payment requires human approval.
+                </p>
+
+            </div>
+
+
+            <div id="modalError" class="modal-error"></div>
+
+
+            <div class="modal-actions">
+
+                <button id="cancelApprovalButton" class="modal-cancel-button" type="button">
+                    Cancel
+                </button>
+
+                <button id="confirmApprovalButton" class="modal-approve-button" type="button">
+                    Approve & Pay
+                </button>
 
             </div>
 
         </div>
 
-
-        <nav>
-
-            <a
-                href="#"
-                class="nav-item active"
-            >
-
-                <span>◈</span>
-
-                Dashboard
-
-            </a>
-
-
-            <a
-                href="#bills"
-                class="nav-item"
-            >
-
-                <span>▣</span>
-
-                Bills
-
-            </a>
-
-
-            <a
-                href="#activity"
-                class="nav-item"
-            >
-
-                <span>↻</span>
-
-                Activity
-
-            </a>
-
-        </nav>
-
-
-        <div
-    id="systemStatus"
-    class="system-status"
->
-
-    <span
-        id="systemStatusDot"
-        class="status-dot"
-    ></span>
-
-    <div>
-
-        <strong id="systemStatusTitle">
-            Checking system...
-        </strong>
-
-        <small id="systemStatusMessage">
-            Connecting to LifeOps API
-        </small>
-
     </div>
 
-</div>
 
+    <!-- =========================================================
+     BILL DETAIL DRAWER
+     ========================================================= -->
 
-    </aside>
+    <div id="billDetailOverlay" class="bill-detail-overlay">
 
+        <aside id="billDetailDrawer" class="bill-detail-drawer" aria-label="Bill details">
 
+            <!-- HEADER -->
 
-    <!-- =====================================================
-         MAIN CONTENT
-         ===================================================== -->
-
-    <main class="main">
-
-
-        <!-- HEADER -->
-
-        <header class="topbar">
-
-            <div>
-
-                <p class="eyebrow">
-                    OPERATIONS CENTER
-                </p>
-
-                <h2>
-                    LifeOps Dashboard
-                </h2>
-
-                <p class="subtitle">
-                    Autonomous financial operations and payment safety.
-                </p>
-
-            </div>
-
-
-            <button
-                id="runButton"
-                class="primary-button"
-            >
-
-                <span>▶</span>
-
-                Run LifeOps
-
-            </button>
-
-        </header>
-
-
-
-        <!-- =================================================
-             STATISTICS
-             ================================================= -->
-
-        <section class="stats-grid">
-
-
-            <div class="stat-card">
-
-                <div class="stat-header">
-
-                    <span>
-                        Total Bills
-                    </span>
-
-                    <div class="stat-icon">
-                        ◈
-                    </div>
-
-                </div>
-
-
-                <strong id="totalBills">
-                    —
-                </strong>
-
-
-                <small>
-                    Tracked obligations
-                </small>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <div class="stat-header">
-
-                    <span>
-                        Total Paid
-                    </span>
-
-                    <div class="stat-icon success">
-                        ✓
-                    </div>
-
-                </div>
-
-
-                <strong id="totalPaid">
-                    —
-                </strong>
-
-
-                <small id="paidCount">
-                    — paid bills
-                </small>
-
-            </div>
-
-
-
-            <div class="stat-card warning-card">
-
-                <div class="stat-header">
-
-                    <span>
-                        Awaiting Approval
-                    </span>
-
-                    <div class="stat-icon warning">
-                        !
-                    </div>
-
-                </div>
-
-
-                <strong id="approvalAmount">
-                    —
-                </strong>
-
-
-                <small id="approvalCount">
-                    — bills require attention
-                </small>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <div class="stat-header">
-
-                    <span>
-                        Blocked
-                    </span>
-
-                    <div class="stat-icon danger">
-                        ×
-                    </div>
-
-                </div>
-
-
-                <strong id="blockedAmount">
-                    —
-                </strong>
-
-
-                <small id="blockedCount">
-                    — blocked bills
-                </small>
-
-            </div>
-
-
-                </section>
-
-
-        <!-- =================================================
-             LIFEOPS INTELLIGENCE
-             ================================================= -->
-
-        <section
-            id="intelligence"
-            class="intelligence-panel"
-        >
-
-            <div class="intelligence-main">
-
-                <div class="intelligence-icon">
-                    ◈
-                </div>
-
-
-                <div class="intelligence-content">
-
-                    <div class="intelligence-heading">
-
-                        <div>
-
-                            <p class="intelligence-eyebrow">
-                                LIFEOPS INTELLIGENCE
-                            </p>
-
-                            <h3 id="intelligenceTitle">
-                                Analysing financial operations...
-                            </h3>
-
-                        </div>
-
-
-                        <span
-                            id="intelligenceHealth"
-                            class="intelligence-health"
-                        >
-                            CHECKING
-                        </span>
-
-                    </div>
-
-
-                    <p
-                        id="intelligenceMessage"
-                        class="intelligence-message"
-                    >
-                        LifeOps is evaluating your financial obligations
-                        and safety decisions.
-                    </p>
-
-
-                    <div class="intelligence-metrics">
-
-                        <div class="intelligence-metric">
-
-                            <span>
-                                PROCESSED
-                            </span>
-
-                            <strong id="intelligenceProcessed">
-                                —
-                            </strong>
-
-                            <small>
-                                value handled
-                            </small>
-
-                        </div>
-
-
-                        <div class="intelligence-metric">
-
-                            <span>
-                                RESOLVED
-                            </span>
-
-                            <strong id="intelligenceResolved">
-                                —
-                            </strong>
-
-                            <small>
-                                obligations
-                            </small>
-
-                        </div>
-
-
-                        <div class="intelligence-metric">
-
-                            <span>
-                                ATTENTION
-                            </span>
-
-                            <strong id="intelligenceAttention">
-                                —
-                            </strong>
-
-                            <small>
-                                requiring action
-                            </small>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             BILLS
-             ================================================= -->
-
-        <section
-            class="panel"
-            id="bills"
-        >
-
-
-            <div class="panel-header">
+            <div class="bill-detail-header">
 
                 <div>
 
-                    <h3>
-                        Financial Obligations
+                    <p class="bill-detail-eyebrow">
+                        LIFEOPS EXPLAINABILITY
+                    </p>
+
+                    <h3 id="detailBillName">
+                        Bill Details
                     </h3>
 
-                    <p>
-                        Current status of all tracked bills
+                    <p id="detailBillCategory">
+                        Financial obligation
                     </p>
 
                 </div>
 
-
-                <button
-                    class="refresh-button"
-                    onclick="loadDashboard()"
-                >
-
-                    ↻ Refresh
-
+                <button id="closeBillDetailButton" class="bill-detail-close" type="button"
+                    aria-label="Close bill details">
+                    ×
                 </button>
 
             </div>
 
 
+            <!-- DRAWER CONTENT -->
 
-            <div class="table-wrapper">
+            <div id="billDetailContent" class="bill-detail-content">
 
+                <div class="bill-detail-loading">
 
-                <table>
+                    <span class="activity-spinner"></span>
 
+                    <div>
 
-                    <thead>
+                        <strong>
+                            Loading bill details
+                        </strong>
 
-                        <tr>
+                        <p>
+                            Retrieving LifeOps decision history...
+                        </p>
 
-                            <th>
-                                Bill
-                            </th>
-
-                            <th>
-                                Amount
-                            </th>
-
-                            <th>
-                                Due Date
-                            </th>
-
-                            <th>
-                                Decision
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-
-                    <tbody id="billsTable">
-
-                        <tr>
-
-                            <td
-                                colspan="6"
-                                class="loading"
-                            >
-
-                                Loading LifeOps data...
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-
-                </table>
-
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             ACTIVITY
-             ================================================= -->
-
-        <section
-            class="panel activity-panel"
-            id="activity"
-        >
-
-
-            <div class="panel-header activity-panel-header">
-
-
-                <div>
-
-                    <p class="activity-eyebrow">
-                        AGENT AUDIT TRAIL
-                    </p>
-
-                    <h3>
-                        LifeOps Activity
-                    </h3>
-
-                    <p>
-                        Autonomous actions, decisions and payment events
-                    </p>
-
-                </div>
-
-
-
-                <div class="activity-live">
-
-                    <span class="activity-live-dot"></span>
-
-                    LIVE
-
-                </div>
-
-
-            </div>
-
-
-
-            <div
-                id="activityOutput"
-                class="activity-feed"
-            >
-
-
-                <div class="activity-empty">
-
-                    <div class="activity-empty-icon">
-                        ◎
                     </div>
 
-                    <strong>
-                        No activity yet
-                    </strong>
-
-                    <p>
-                        Run LifeOps to begin a financial operations cycle.
-                    </p>
-
                 </div>
 
-
             </div>
 
-
-        </section>
-
-
-    </main>
-
-
-</div>
-
-
-<!-- =========================================================
-     APPROVAL MODAL
-     ========================================================= -->
-
-<div id="approvalModal" class="modal-overlay">
-
-    <div class="approval-modal">
-
-        <div class="modal-icon">
-            !
-        </div>
-
-        <div class="modal-heading">
-
-            <p class="modal-eyebrow">
-                HUMAN APPROVAL REQUIRED
-            </p>
-
-            <h3>
-                Review Payment
-            </h3>
-
-            <p>
-                LifeOps paused this payment because it requires your authorization.
-            </p>
-
-        </div>
-
-
-        <div class="approval-details">
-
-            <div class="approval-detail-row">
-                <span>Bill</span>
-                <strong id="modalBillName">—</strong>
-            </div>
-
-            <div class="approval-detail-row">
-                <span>Amount</span>
-                <strong id="modalBillAmount">—</strong>
-            </div>
-
-        </div>
-
-
-        <div class="approval-reason">
-
-            <span class="reason-label">
-                WHY LIFEOPS FLAGGED THIS
-            </span>
-
-            <p id="modalReason">
-                This payment requires human approval.
-            </p>
-
-        </div>
-
-
-        <div id="modalError" class="modal-error"></div>
-
-
-        <div class="modal-actions">
-
-            <button
-                id="cancelApprovalButton"
-                class="modal-cancel-button"
-                type="button"
-            >
-                Cancel
-            </button>
-
-            <button
-                id="confirmApprovalButton"
-                class="modal-approve-button"
-                type="button"
-            >
-                Approve & Pay
-            </button>
-
-        </div>
+        </aside>
 
     </div>
 
-</div>
 
-
-<!-- =========================================================
-     BILL DETAIL DRAWER
-     ========================================================= -->
-
-<div id="billDetailOverlay" class="bill-detail-overlay">
-
-    <aside
-        id="billDetailDrawer"
-        class="bill-detail-drawer"
-        aria-label="Bill details"
-    >
-
-        <!-- HEADER -->
-
-        <div class="bill-detail-header">
-
-            <div>
-
-                <p class="bill-detail-eyebrow">
-                    LIFEOPS EXPLAINABILITY
-                </p>
-
-                <h3 id="detailBillName">
-                    Bill Details
-                </h3>
-
-                <p id="detailBillCategory">
-                    Financial obligation
-                </p>
-
-            </div>
-
-            <button
-                id="closeBillDetailButton"
-                class="bill-detail-close"
-                type="button"
-                aria-label="Close bill details"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <!-- DRAWER CONTENT -->
-
-        <div
-            id="billDetailContent"
-            class="bill-detail-content"
-        >
-
-            <div class="bill-detail-loading">
-
-                <span class="activity-spinner"></span>
-
-                <div>
-
-                    <strong>
-                        Loading bill details
-                    </strong>
-
-                    <p>
-                        Retrieving LifeOps decision history...
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </aside>
-
-</div>
-
-
-<!-- =========================================================
+    <!-- =========================================================
      TOAST
      ========================================================= -->
 
-<div
-    id="toast" class="toast"></div>
+    <div id="toast" class="toast"></div>
 
 
 
-<script src="/dashboard/app.js?v=15"></script>
+    <script src="/dashboard/app.js?v=16"></script>
 
 
 </body>
