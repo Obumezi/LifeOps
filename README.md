@@ -6,11 +6,101 @@
 
 **Live Demo:** https://lifeops-qyit.onrender.com/
 
-LifeOps is an AI-powered financial operations agent built with **Strands Agents, Amazon Bedrock, Amazon Bedrock AgentCore, FastAPI, and SQLite**.
+**Repository:** https://github.com/Obumezi/LifeOps
 
-Instead of simply reminding a user that a bill is due, LifeOps investigates the obligation, reviews historical spending, evaluates deterministic safety policies, decides whether the obligation can be handled automatically, executes approved payments, and escalates unusual or high-value transactions for human approval.
+LifeOps is an AI-powered financial operations agent built with **Strands Agents, Amazon Bedrock, Amazon Bedrock AgentCore, FastAPI, SQLite, Python, and JavaScript**.
 
-The project demonstrates **bounded AI autonomy**: the AI agent can reason and orchestrate workflows, but it cannot override deterministic financial controls.
+Instead of simply reminding a user that a bill is due, LifeOps investigates the obligation, reviews historical spending, evaluates deterministic safety policies, decides whether the obligation can be handled automatically, executes permitted simulated payments, and escalates unusual or high-value transactions for human approval.
+
+The project demonstrates **bounded AI autonomy**:
+
+> **AI can reason and orchestrate workflows, but it cannot override deterministic financial controls.**
+
+---
+
+# Quick Start for Judges and Reviewers
+
+The fastest way to experience LifeOps is through the public demo:
+
+### [Open the LifeOps Live Demo](https://lifeops-qyit.onrender.com/)
+
+For local reproduction:
+
+```bash
+git clone https://github.com/Obumezi/LifeOps.git
+cd LifeOps
+
+python -m venv .venv
+```
+
+Activate the virtual environment.
+
+### Windows PowerShell
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### macOS / Linux
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Configure your own AWS credentials and verify them:
+
+```bash
+aws sts get-caller-identity
+```
+
+Reset the LifeOps demo:
+
+```bash
+python reset_db.py
+```
+
+Start the application:
+
+```bash
+uvicorn api.main:app --reload
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/
+```
+
+Then click:
+
+```text
+Run LifeOps
+```
+
+Expected autonomous result:
+
+```text
+Electricity Bill       → NEEDS_APPROVAL
+Internet Subscription  → PAID
+Netflix                → PAID
+```
+
+Review the Electricity Bill, approve it, and the final state should show:
+
+```text
+3/3 obligations resolved
+Total Paid: ₦217,000
+Awaiting Approval: ₦0
+Blocked: ₦0
+```
+
+> Reviewers must use their own AWS credentials. No developer passwords, IAM credentials, access keys, or AWS account access are required.
 
 ---
 
@@ -40,11 +130,13 @@ LifeOps addresses both problems.
 
 It automates routine obligations while keeping deterministic safety controls between AI reasoning and financial execution.
 
+This makes LifeOps a strong fit for the **Everyday Agents** category: routine financial busywork can be handled autonomously, while the user is brought back into the loop only when a meaningful decision is required.
+
 ---
 
 # 2. Core Idea
 
-LifeOps follows a simple principle:
+LifeOps follows one central principle:
 
 > **AI decides what should happen. Deterministic controls decide what is allowed to happen.**
 
@@ -54,7 +146,7 @@ It can:
 
 - discover pending obligations,
 - retrieve historical bill information,
-- request policy evaluation,
+- request deterministic policy evaluation,
 - persist decisions,
 - initiate permitted payments,
 - generate financial reports.
@@ -63,18 +155,16 @@ However, the LLM does **not** have unrestricted authority to execute payments.
 
 Financial actions are protected by deterministic tools and policies.
 
-For example:
-
 ```text
-Current bill
+Current Bill
      │
      ▼
-Historical analysis
+Historical Analysis
      │
      ▼
-Deterministic policy evaluation
+Deterministic Policy Evaluation
      │
-     ├── AUTO_HANDLE ───────► Payment allowed
+     ├── AUTO_HANDLE ───────► Payment permitted
      │
      ├── NEEDS_APPROVAL ────► Human approval required
      │
@@ -87,7 +177,7 @@ This creates a bounded-autonomy architecture where AI provides intelligence and 
 
 # 3. Demo Scenario
 
-LifeOps currently demonstrates the workflow using three financial obligations.
+LifeOps demonstrates the workflow using three financial obligations.
 
 | Bill | Amount | Expected Behaviour |
 |---|---:|---|
@@ -115,13 +205,19 @@ Current Electricity bill:
 ₦185,000
 ```
 
-Increase above historical average:
+Difference from historical average:
 
 ```text
-≈ 44.91%
+≈ +44.91%
 ```
 
-LifeOps therefore refuses to automatically pay the Electricity bill.
+Automatic-payment limit:
+
+```text
+₦100,000
+```
+
+LifeOps therefore refuses to automatically process the Electricity Bill.
 
 The deterministic policy returns:
 
@@ -129,7 +225,7 @@ The deterministic policy returns:
 NEEDS_APPROVAL
 ```
 
-Meanwhile, the Internet and Netflix bills fall within the configured safety policy and are automatically processed.
+Meanwhile, the Internet and Netflix obligations fall within the configured safety policy and are automatically processed.
 
 After the autonomous workflow:
 
@@ -139,12 +235,13 @@ Awaiting Approval:  ₦185,000
 Blocked:             ₦0
 ```
 
-After the user explicitly approves the Electricity bill:
+After the user explicitly approves the Electricity Bill:
 
 ```text
 Total Paid:          ₦217,000
 Awaiting Approval:   ₦0
-Blocked:              ₦0
+Blocked:             ₦0
+Resolved:            3/3
 ```
 
 ---
@@ -153,17 +250,17 @@ Blocked:              ₦0
 
 ## Autonomous Obligation Discovery
 
-LifeOps discovers pending financial obligations from its task store and provides the agent with authoritative database task IDs.
+LifeOps discovers pending financial obligations from its task store and provides the agent with authoritative task IDs.
 
-The agent does not invent task identifiers.
+The agent does not invent identifiers.
 
 ---
 
 ## Historical Bill Investigation
 
-Before making a decision, LifeOps retrieves historical payment information for each obligation.
+Before making a decision, LifeOps retrieves previous bill amounts.
 
-This allows the system to identify unusual spending patterns rather than evaluating a bill using its current amount alone.
+This allows the system to evaluate whether the current bill is consistent with the user's historical spending pattern.
 
 ---
 
@@ -186,7 +283,7 @@ NEEDS_APPROVAL
 BLOCK
 ```
 
-The agent must accept the policy result.
+The Strands agent must respect the policy result.
 
 It cannot override it.
 
@@ -200,9 +297,9 @@ Bills classified as:
 AUTO_HANDLE
 ```
 
-may proceed to the payment execution tool.
+may proceed to the payment execution layer.
 
-The payment layer independently checks the persisted decision before executing the transaction.
+The payment layer independently checks the persisted decision before processing a transaction.
 
 This means that even if an agent attempted to call the payment tool incorrectly, the payment controller would reject the request.
 
@@ -216,7 +313,7 @@ Bills classified as:
 NEEDS_APPROVAL
 ```
 
-cannot be automatically paid.
+cannot be automatically processed.
 
 The dashboard presents the bill to the user for review.
 
@@ -242,7 +339,7 @@ Before processing a payment, the payment layer checks whether:
 - a completed transaction already exists,
 - the latest decision permits payment.
 
-This makes payment execution idempotent and reduces the risk of duplicate financial transactions.
+Payment execution is therefore designed to be idempotent.
 
 ---
 
@@ -250,15 +347,13 @@ This makes payment execution idempotent and reduces the risk of duplicate financ
 
 Agent decisions and payment events are persisted.
 
-The dashboard displays a chronological activity history showing how LifeOps handled each obligation.
-
-This provides an audit trail instead of presenting only the final result.
+The dashboard displays a chronological history showing how each obligation was handled.
 
 ---
 
 ## Explainability
 
-Each bill includes a detailed explainability view containing information such as:
+Each bill includes an explainability view containing information such as:
 
 - current bill amount,
 - historical average,
@@ -269,13 +364,13 @@ Each bill includes a detailed explainability view containing information such as
 - payment status,
 - historical transactions.
 
-This makes it possible to understand **why** LifeOps made a decision.
+This allows users to understand **why** the agent made a particular decision.
 
 ---
 
 ## LifeOps Intelligence Panel
 
-The dashboard summarizes the current financial state and identifies whether attention is required.
+The dashboard summarizes the user's financial-operation state.
 
 Example states include:
 
@@ -284,15 +379,15 @@ HEALTHY
 ATTENTION REQUIRED
 ```
 
-This allows the user to quickly understand whether LifeOps has completed all obligations or requires human intervention.
+This allows the user to immediately see whether LifeOps requires human intervention.
 
 ---
 
 ## API Health Monitoring
 
-The dashboard continuously monitors the FastAPI backend.
+The dashboard monitors the FastAPI backend.
 
-The system indicator displays whether the LifeOps API is:
+The interface displays:
 
 ```text
 Online
@@ -306,16 +401,13 @@ Checking
 
 ## Architecture Diagram
 
-
 ![LifeOps Architecture](docs/lifeops-architecture.png)
-
-
 
 LifeOps uses a layered architecture.
 
 ```text
                          ┌─────────────────────┐
-                         │       User          │
+                         │        User         │
                          └──────────┬──────────┘
                                     │
                                     ▼
@@ -329,38 +421,43 @@ LifeOps uses a layered architecture.
                          │     FastAPI API     │
                          └──────────┬──────────┘
                                     │
-                                    ▼
-                    ┌───────────────────────────────┐
-                    │      Strands Agent           │
-                    │                               │
-                    │  Amazon Bedrock               │
-                    │  Claude Sonnet                │
-                    └──────────────┬────────────────┘
-                                   │
-                 ┌─────────────────┼───────────────────┐
-                 │                 │                   │
-                 ▼                 ▼                   ▼
-        ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-        │ Task Discovery │ │ Bill History   │ │ Policy Engine  │
-        └────────────────┘ └────────────────┘ └────────┬───────┘
-                                                       │
-                                      ┌────────────────┼───────────────┐
-                                      │                │               │
-                                      ▼                ▼               ▼
-                               AUTO_HANDLE     NEEDS_APPROVAL        BLOCK
-                                      │                │               │
-                                      ▼                ▼               X
-                              Persist Decision    Human Review
-                                      │                │
-                                      ▼                ▼
-                              Payment Controller  Approve & Pay
-                                      │                │
-                                      └────────┬───────┘
-                                               ▼
-                                         SQLite State
-                                               │
-                                               ▼
-                                      Activity / Reporting
+                   ┌────────────────┴──────────────┐
+                   │                               │
+                   ▼                               ▼
+          ┌─────────────────┐             ┌─────────────────┐
+          │  SQLite State   │             │  Strands Agent  │
+          └─────────────────┘             └────────┬────────┘
+                                                   │
+                                                   ▼
+                                          ┌─────────────────┐
+                                          │ Amazon Bedrock  │
+                                          │ Claude Sonnet   │
+                                          └────────┬────────┘
+                                                   │
+                                                   ▼
+                                      ┌────────────────────────┐
+                                      │ Controlled Agent Tools │
+                                      └───────────┬────────────┘
+                                                  │
+                      ┌───────────────────────────┼─────────────────────────┐
+                      │                           │                         │
+                      ▼                           ▼                         ▼
+               Task Discovery              Bill History               Policy Engine
+                                                  │
+                                                  ▼
+                                    AUTO_HANDLE / NEEDS_APPROVAL / BLOCK
+                                                  │
+                                                  ▼
+                                         Persist Decision
+                                                  │
+                               ┌──────────────────┴─────────────────┐
+                               │                                    │
+                               ▼                                    ▼
+                       Payment Controller                    Human Review
+                               │                                    │
+                               └──────────────────┬─────────────────┘
+                                                  ▼
+                                         Activity / Reporting
 ```
 
 ---
@@ -382,18 +479,16 @@ Amazon Bedrock
 Amazon Bedrock AgentCore Runtime
      │
      ├── Runtime execution
-     │
      ├── Session handling
-     │
      └── Observability
              │
              ▼
         Amazon CloudWatch
 ```
 
-The deployed AgentCore implementation demonstrates that the LifeOps agent can operate beyond the local development environment.
+The deployed AgentCore implementation demonstrates that LifeOps can execute outside the local development environment.
 
-The deployed runtime has been successfully invoked with the complete LifeOps workflow.
+The deployed runtime has successfully executed the LifeOps autonomous workflow.
 
 AgentCore observability provides trace visibility for runtime executions.
 
@@ -422,37 +517,35 @@ execute_payment
 generate_financial_report
 ```
 
-Each tool has a clearly defined responsibility.
-
 ### `get_upcoming_tasks`
 
-Retrieves pending obligations and their authoritative task IDs.
+Retrieves pending obligations and authoritative task IDs.
 
 ### `get_bill_history`
 
-Retrieves previous bill amounts for historical analysis.
+Retrieves historical bill amounts.
 
 ### `evaluate_bill_policy`
 
-Applies deterministic financial safety rules.
+Applies deterministic financial rules.
 
 ### `record_decision`
 
-Persists the policy decision before financial execution.
+Persists the resulting policy decision.
 
 ### `execute_payment`
 
-Executes only transactions permitted by persisted policy state.
+Processes only transactions permitted by persisted policy state.
 
 ### `generate_financial_report`
 
-Produces the final financial summary after all obligations have been processed.
+Produces a financial summary after the agent completes its workflow.
 
 ---
 
 # 8. Sequential Financial Safety
 
-One important design decision in LifeOps is that financial mutations are performed sequentially.
+Financial mutations are intentionally performed sequentially.
 
 Read-only operations such as:
 
@@ -461,7 +554,7 @@ history retrieval
 policy evaluation
 ```
 
-may be performed concurrently.
+may occur independently.
 
 However:
 
@@ -473,45 +566,45 @@ wait for persistence
 execute payment
 ```
 
-must occur sequentially.
+must occur in order.
 
-This prevents race conditions where payment execution could occur before the corresponding decision has been committed.
+This prevents a payment from being processed before the corresponding decision has been persisted.
 
-The payment tool independently verifies the persisted decision before allowing execution.
+The payment tool also independently verifies the decision before allowing execution.
 
 ---
 
 # 9. Safety Model
 
-LifeOps uses multiple layers of protection.
+LifeOps uses multiple safety layers.
 
-### Layer 1 — Deterministic policy
+### Layer 1 — Deterministic Policy
 
 The LLM does not determine financial limits.
 
 The policy engine does.
 
-### Layer 2 — Persisted decisions
+### Layer 2 — Persisted Decisions
 
-A decision must exist before payment execution.
+A valid decision must exist before payment execution.
 
-### Layer 3 — Payment authorization
+### Layer 3 — Payment Authorization
 
-The payment tool independently validates the latest decision.
+The payment layer independently validates the latest decision.
 
-### Layer 4 — Human approval
+### Layer 4 — Human Approval
 
 `NEEDS_APPROVAL` transactions require explicit human intervention.
 
-### Layer 5 — Duplicate protection
+### Layer 5 — Duplicate Protection
 
-Previously completed payments cannot be executed again.
+Completed payments cannot be executed again.
 
-### Layer 6 — Audit history
+### Layer 6 — Audit History
 
-Decisions and transactions are persisted for inspection.
+Decisions and payment events remain available for inspection.
 
-This means safety does not depend solely on prompting the LLM to behave correctly.
+Safety therefore does not depend solely on instructing the LLM to behave correctly.
 
 ---
 
@@ -529,25 +622,24 @@ This means safety does not depend solely on prompting the LLM to behave correctl
 | Frontend | HTML, CSS, JavaScript |
 | Language | Python |
 | Testing | Pytest |
-| AWS Infrastructure | AWS CDK / AgentCore CLI |
+| Infrastructure | AWS CDK / AgentCore |
 
 ---
 
 # 11. Project Structure
 
-A simplified representation of the repository:
-
 ```text
-LIFEOPS/
+LifeOps/
 │
 ├── agent/
-│   └── orchestrator.py
+│   ├── orchestrator.py
+│   └── action_router.py
 │
 ├── api/
 │   ├── main.py
 │   ├── activity.py
 │   ├── bill_details.py
-│   └── ...
+│   └── services.py
 │
 ├── dashboard/
 │   ├── index.html
@@ -580,6 +672,11 @@ LIFEOPS/
 │   │
 │   └── agentcore/
 │
+├── docs/
+│   └── lifeops-architecture.png
+│
+├── LICENSE
+├── requirements.txt
 ├── reset_db.py
 └── README.md
 ```
@@ -590,42 +687,49 @@ LIFEOPS/
 
 ## Prerequisites
 
-Recommended environment:
+Before running LifeOps locally, ensure you have:
 
-```text
-Python 3.10+
-AWS CLI
-AWS credentials with Amazon Bedrock access
-```
+- Python 3.10 or later
+- Git
+- AWS CLI
+- An AWS account
+- Amazon Bedrock access
+- AWS credentials configured for your own AWS identity
 
-The project was developed and tested using Python 3.14.
+LifeOps was developed and tested using Python 3.14.
 
-Clone the repository:
+> You do not need the developer's AWS credentials, IAM password, account alias, access keys, or AWS account login to reproduce LifeOps.
+
+---
+
+## Clone the Repository
 
 ```bash
 git clone https://github.com/Obumezi/LifeOps.git
-cd LIFEOPS
+cd LifeOps
 ```
 
-Create a virtual environment:
+---
 
-### Windows
+## Create a Virtual Environment
+
+### Windows PowerShell
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-### macOS/Linux
+### macOS / Linux
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install the project's Python dependencies using the dependency file included in the repository.
+---
 
-For example, if using `requirements.txt`:
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -635,68 +739,192 @@ pip install -r requirements.txt
 
 # 13. AWS Configuration
 
-LifeOps uses Amazon Bedrock for agent reasoning.
+LifeOps uses Amazon Bedrock for agent reasoning through the Strands Agents SDK.
 
-Configure AWS credentials using the AWS CLI:
+Anyone reproducing the project locally must authenticate using **their own AWS account and credentials**.
+
+The repository does not contain the developer's AWS credentials.
+
+---
+
+## Required AWS Permissions
+
+The AWS identity running LifeOps must have permission to invoke Amazon Bedrock models.
+
+At minimum:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+For production environments, permissions should be restricted further to only the required resources.
+
+---
+
+## AWS Region
+
+LifeOps uses:
+
+```text
+us-east-1
+```
+
+Ensure the required Amazon Bedrock model is available to your AWS account in this region.
+
+---
+
+## Configure AWS Credentials
+
+### Option 1 — AWS CLI Credentials
+
+Run:
 
 ```bash
 aws configure
 ```
 
-Or use a named AWS profile.
+Provide credentials for your own AWS IAM identity.
 
-Example:
+Set the default region to:
+
+```text
+us-east-1
+```
+
+---
+
+### Option 2 — Named AWS Profile
+
+Windows PowerShell:
 
 ```powershell
-$env:AWS_PROFILE = "lifeops"
+$env:AWS_PROFILE = "your-profile-name"
 $env:AWS_REGION = "us-east-1"
 ```
 
-Verify the active AWS identity:
+macOS / Linux:
+
+```bash
+export AWS_PROFILE="your-profile-name"
+export AWS_REGION="us-east-1"
+```
+
+The AWS profile name is local to your computer.
+
+You do not need to create a profile named `lifeops`.
+
+---
+
+## Verify AWS Authentication
+
+Before starting LifeOps:
 
 ```bash
 aws sts get-caller-identity
 ```
 
-> Do not commit AWS access keys, secret keys, session tokens, `.env` credentials, or other secrets to the repository.
+A successful result should resemble:
+
+```json
+{
+  "UserId": "EXAMPLEUSERID",
+  "Account": "123456789012",
+  "Arn": "arn:aws:iam::123456789012:user/example-user"
+}
+```
+
+Your actual values will be different.
+
+If this command fails, resolve AWS authentication before starting LifeOps.
+
+> AWS root credentials are not recommended. Use an appropriately permissioned IAM identity.
+
+---
+
+## Expired AWS Sessions
+
+Temporary credentials and AWS CLI login sessions can expire.
+
+Symptoms may include:
+
+```text
+LoginRefreshRequired
+```
+
+or:
+
+```text
+The refresh token has expired
+```
+
+If your environment uses AWS CLI login, reauthenticate:
+
+```bash
+aws login
+```
+
+For a named profile:
+
+```bash
+aws login --profile your-profile-name
+```
+
+Then verify:
+
+```bash
+aws sts get-caller-identity
+```
+
+Restart LifeOps after authentication succeeds.
+
+---
+
+## Security Notice
+
+Never commit AWS credentials to the repository.
+
+Do not commit:
+
+```text
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_SESSION_TOKEN
+IAM passwords
+AWS CLI credential files
+.env
+```
+
+LifeOps' `.gitignore` excludes common local secret and environment files.
 
 ---
 
 # 14. Running LifeOps Locally
 
-From the repository root:
+First verify AWS authentication:
 
 ```bash
-uvicorn api.main:app --reload
+aws sts get-caller-identity
 ```
 
-The FastAPI server will start locally.
-
-Open:
-
-```text
-http://127.0.0.1:8000/
-```
-
-The LifeOps dashboard is served directly by FastAPI.
-
-API documentation is available at:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
----
-
-# 15. Running the Demo
-
-For a clean demonstration, reset the local database:
+Reset the demo database:
 
 ```bash
 python reset_db.py
 ```
 
-Expected starting state:
+Expected clean state:
 
 ```text
 Electricity Bill       → pending
@@ -707,7 +935,7 @@ Agent decisions: 0
 Payments:        0
 ```
 
-Start the application:
+Start FastAPI:
 
 ```bash
 uvicorn api.main:app --reload
@@ -717,6 +945,32 @@ Open:
 
 ```text
 http://127.0.0.1:8000/
+```
+
+API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Health endpoint:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+---
+
+# 15. Reproducing the Demo
+
+After opening the dashboard, confirm:
+
+```text
+System Status → Online
+
+Electricity Bill       → Pending
+Internet Subscription  → Pending
+Netflix                → Pending
 ```
 
 Click:
@@ -732,24 +986,37 @@ The Strands agent will:
 2. Retrieve historical bill information
 3. Evaluate deterministic policy
 4. Persist each decision
-5. Automatically pay safe obligations
-6. Escalate unsafe/high-value obligations
+5. Automatically process safe obligations
+6. Escalate high-risk obligations
 7. Generate the final financial report
 ```
 
-Expected result:
+Expected autonomous result:
 
 ```text
 Electricity Bill       → NEEDS_APPROVAL
 Internet Subscription  → PAID
 Netflix                → PAID
+```
 
+Expected summary:
+
+```text
 Total Paid:          ₦32,000
 Awaiting Approval:  ₦185,000
 Blocked:             ₦0
 ```
 
-Review the Electricity bill and select:
+The Electricity Bill is escalated because:
+
+```text
+Current amount:         ₦185,000
+Historical average:     ≈ ₦127,666.67
+Difference:             ≈ 44.91%
+Automatic payment cap:  ₦100,000
+```
+
+Review the Electricity Bill and select:
 
 ```text
 Approve & Pay
@@ -765,7 +1032,11 @@ Netflix                → PAID
 Total Paid:          ₦217,000
 Awaiting Approval:   ₦0
 Blocked:             ₦0
+
+Resolved: 3/3
 ```
+
+> Payment execution in this prototype is simulated. No real money is transferred.
 
 ---
 
@@ -778,11 +1049,11 @@ Blocked:             ₦0
 | GET | `/api/dashboard` | Dashboard state |
 | GET | `/api/bills` | Retrieve bills |
 | GET | `/api/bill/{bill_name}` | Bill status |
-| GET | `/api/bill/{bill_name}/details` | Explainability/details |
+| GET | `/api/bill/{bill_name}/details` | Explainability details |
 | POST | `/api/bill/{bill_name}/approve` | Human approval |
 | POST | `/api/bill/{bill_name}/pay` | Execute permitted payment |
 | POST | `/api/run` | Run LifeOps autonomous workflow |
-| GET | `/api/activity` | Persistent activity history |
+| GET | `/api/activity` | Activity history |
 
 Interactive API documentation:
 
@@ -800,30 +1071,150 @@ Run:
 python -m pytest -v
 ```
 
-Current verified test result:
+Current verified result:
 
 ```text
 10 passed
 ```
 
-The automated test suite covers important behaviours including:
+The tests cover:
 
-```text
-API health
-bill status retrieval
-unknown bill handling
-dashboard endpoint
-approval restrictions
-approved payment execution
-payment idempotency
-NEEDS_APPROVAL payment blocking
-BLOCK payment blocking
-AUTO_HANDLE payment execution
+- API health
+- bill status retrieval
+- unknown bill handling
+- dashboard endpoint
+- approval restrictions
+- approved payment execution
+- payment idempotency
+- `NEEDS_APPROVAL` payment blocking
+- `BLOCK` payment blocking
+- `AUTO_HANDLE` payment execution
+
+---
+
+# 18. Troubleshooting
+
+## `Run LifeOps` Returns `500 Internal Server Error`
+
+First verify AWS authentication:
+
+```bash
+aws sts get-caller-identity
+```
+
+If authentication fails or has expired, reauthenticate.
+
+Then restart:
+
+```bash
+uvicorn api.main:app --reload
 ```
 
 ---
 
-# 18. AgentCore Deployment
+## `LoginRefreshRequired`
+
+This usually means the AWS authentication session expired.
+
+Reauthenticate:
+
+```bash
+aws login
+```
+
+or:
+
+```bash
+aws login --profile your-profile-name
+```
+
+Verify:
+
+```bash
+aws sts get-caller-identity
+```
+
+Then restart the application.
+
+---
+
+## `AccessDeniedException`
+
+Confirm your AWS identity has:
+
+```text
+bedrock:InvokeModel
+bedrock:InvokeModelWithResponseStream
+```
+
+Also confirm that the required Bedrock model is available in:
+
+```text
+us-east-1
+```
+
+---
+
+## Dashboard Shows Old Payment State After Reset
+
+Run:
+
+```bash
+python reset_db.py
+```
+
+Then hard-refresh the browser.
+
+Expected reset state:
+
+```text
+Electricity → pending
+Internet    → pending
+Netflix     → pending
+```
+
+You can verify the backend directly with:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/api/dashboard | ConvertTo-Json -Depth 10
+```
+
+---
+
+## Verify Backend Health
+
+Open:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+Expected:
+
+```json
+{
+  "status": "healthy",
+  "service": "LifeOps"
+}
+```
+
+---
+
+# 19. Public Demo
+
+A hosted version of LifeOps is available here:
+
+### [Launch LifeOps](https://lifeops-qyit.onrender.com/)
+
+The public demo allows reviewers to experience LifeOps without configuring a local AWS development environment.
+
+> The hosted service may require a short startup period after inactivity.
+
+The public deployment uses restricted AWS credentials configured on the hosting platform. These credentials are not included in the repository.
+
+---
+
+# 20. Amazon Bedrock AgentCore Deployment
 
 LifeOps includes an AgentCore-compatible application under:
 
@@ -835,24 +1226,20 @@ The AgentCore application uses the same core LifeOps safety model while maintain
 
 This cloud demonstration is intentionally separate from the local SQLite-backed dashboard state.
 
-The local application remains the primary end-to-end product experience.
+The local FastAPI application remains the primary end-to-end product experience.
 
-## AgentCore prerequisites
+---
 
-The project uses:
+## AgentCore Prerequisites
+
+AgentCore deployment requires an AWS environment with the appropriate AgentCore permissions and supporting tools, including:
 
 ```text
 AWS CLI
 Node.js
 AWS CDK
-AgentCore CLI
 uv
-```
-
-Install the AgentCore CLI:
-
-```bash
-npm install -g @aws/agentcore
+AgentCore CLI
 ```
 
 Verify:
@@ -861,9 +1248,15 @@ Verify:
 agentcore --version
 ```
 
+and:
+
+```bash
+uv --version
+```
+
 ---
 
-# 19. Running AgentCore Locally
+# 21. Running AgentCore Locally
 
 Navigate to:
 
@@ -871,7 +1264,7 @@ Navigate to:
 LifeOpsAgent/
 ```
 
-Start the AgentCore development runtime:
+Start the local AgentCore runtime:
 
 ```bash
 agentcore dev --port 8080 --logs
@@ -883,7 +1276,7 @@ From another terminal:
 agentcore dev "run lifeops" --stream
 ```
 
-The expected result mirrors the autonomous portion of the LifeOps workflow:
+Expected result:
 
 ```text
 Internet Subscription → AUTO_HANDLE → PAID
@@ -893,36 +1286,38 @@ Electricity Bill      → NEEDS_APPROVAL
 
 ---
 
-# 20. Deploying to Amazon Bedrock AgentCore
+# 22. Deploying to Amazon Bedrock AgentCore
 
-Before deploying, verify the AWS account and region carefully:
+Verify AWS identity:
 
 ```bash
 aws sts get-caller-identity
 ```
 
-Perform a deployment dry run:
+Perform a dry run:
 
 ```bash
 agentcore deploy --dry-run
 ```
 
-When ready:
+If AWS CDK bootstrap is required, complete the bootstrap for your own AWS account and deployment region.
+
+Deploy:
 
 ```bash
 agentcore deploy
 ```
 
-Check deployment status:
+Check deployment:
 
 ```bash
 agentcore status
 ```
 
-A successful deployment should report the runtime as:
+A successful deployment should report:
 
 ```text
-READY
+Runtime: READY
 ```
 
 Invoke the deployed agent:
@@ -933,78 +1328,78 @@ agentcore invoke --prompt "run lifeops" --stream
 
 ---
 
-# 21. AgentCore Observability
+# 23. AgentCore Observability
 
-LifeOps emits runtime telemetry through AgentCore observability.
-
-Runtime logs can be viewed using:
+Stream runtime logs:
 
 ```bash
 agentcore logs
 ```
 
-Agent traces can be listed using:
+List traces:
 
 ```bash
 agentcore traces list
 ```
 
-These traces provide evidence of cloud agent execution and can be inspected through Amazon CloudWatch.
+AgentCore observability and Amazon CloudWatch provide visibility into deployed agent execution.
 
-This is particularly important for autonomous systems because it provides visibility into how the agent behaves during execution.
+This is particularly important for autonomous systems because it provides operational traceability beyond the final response shown to the user.
 
 ---
 
-# 22. Local State vs AgentCore Demo State
+# 24. Local State vs AgentCore Demo State
 
-The repository currently contains two execution environments.
+LifeOps contains two execution environments.
 
-### Local LifeOps
+## Local LifeOps
 
-The local FastAPI/dashboard application uses:
+The FastAPI/dashboard application uses:
 
 ```text
 SQLite
 ```
 
-as its authoritative state store.
+as its authoritative demo state store.
 
-This provides the complete end-to-end experience including:
+It provides:
 
-- dashboard,
-- persistent activity,
+- dashboard state,
+- decisions,
 - human approval,
-- payment state,
+- simulated payment state,
+- activity history,
 - explainability.
 
-### AgentCore Runtime
+## AgentCore Runtime
 
-The AgentCore deployment uses isolated demonstration state packaged with the cloud agent.
+The AgentCore deployment uses isolated demo state packaged with the cloud agent.
 
-This was deliberately chosen to validate:
+It validates:
 
 - Strands orchestration,
 - Amazon Bedrock reasoning,
 - AgentCore Runtime,
 - cloud invocation,
-- observability,
+- observability.
 
-without introducing a second shared cloud database into the hackathon prototype.
+The AgentCore runtime does **not** share the local SQLite database.
 
-Therefore, the AgentCore demo should **not** be interpreted as sharing live SQLite state with the local dashboard.
-
-A production version could replace these stores with a shared managed persistence layer.
+This separation is intentional for the hackathon prototype.
 
 ---
 
-# 23. Current Prototype Limitations
+# 25. Current Prototype Limitations
 
-LifeOps is a hackathon prototype and does not currently move real money.
+LifeOps is a hackathon prototype.
 
-Payment execution is simulated through the application's payment transaction layer.
+It does not move real money.
 
-A production implementation would require integration with regulated payment providers and additional controls including:
+Payment execution is simulated through the application transaction layer.
 
+A production version would require:
+
+- regulated payment-provider integrations,
 - authentication,
 - authorization,
 - encrypted secret management,
@@ -1013,23 +1408,31 @@ A production implementation would require integration with regulated payment pro
 - provider webhooks,
 - reconciliation,
 - regulatory compliance,
-- stronger persistent cloud storage,
-- user-specific policy configuration,
+- managed cloud persistence,
+- configurable user policy,
 - production-grade audit retention.
 
-The current prototype focuses on demonstrating the **agent architecture, autonomous workflow, deterministic safety controls, human-in-the-loop design, and cloud agent deployment**.
+The current prototype focuses on demonstrating:
+
+- agent architecture,
+- autonomous workflows,
+- deterministic financial safety,
+- human-in-the-loop control,
+- explainability,
+- cloud deployment,
+- observability.
 
 ---
 
-# 24. Production Evolution
+# 26. Production Evolution
 
-A production LifeOps architecture could evolve toward:
+A future LifeOps architecture could evolve toward:
 
 ```text
 Bank / Billing APIs
         │
         ▼
-Event / Obligation Detection
+Obligation Detection
         │
         ▼
 Strands Agent
@@ -1056,34 +1459,39 @@ AgentCore Runtime
 CloudWatch Observability
 ```
 
-Potential future capabilities include:
+Potential capabilities include:
 
-- bank account integrations,
-- utility provider integrations,
+- bank integrations,
+- utility-provider integrations,
 - recurring obligation discovery,
-- configurable user spending policies,
+- configurable spending policies,
 - anomaly detection,
 - budget-aware decision making,
 - notification services,
+- adaptive policy recommendations,
 - multi-user authentication,
 - shared cloud persistence,
 - mobile applications,
 - transaction reconciliation.
 
+An important future design principle would remain unchanged:
+
+> The agent may recommend changes to financial safety rules, but it should not be able to independently rewrite the safeguards that constrain it.
+
 ---
 
-# 25. Why Use an AI Agent?
+# 27. Why Use an AI Agent?
 
-A traditional automation could simply implement:
+A simple automation could implement:
 
-```text
+```python
 if amount < limit:
     pay()
 ```
 
-LifeOps goes beyond this.
+LifeOps goes beyond a fixed conditional.
 
-The agent coordinates multiple pieces of information and tools across a workflow:
+The agent coordinates multiple pieces of information and tools:
 
 ```text
 What obligations exist?
@@ -1092,9 +1500,9 @@ What happened previously?
         ↓
 Is the current amount unusual?
         ↓
-What does financial policy permit?
+What does policy permit?
         ↓
-Should this be automated or escalated?
+Should the transaction be automated or escalated?
         ↓
 Was the decision persisted?
         ↓
@@ -1103,27 +1511,41 @@ Can payment safely execute?
 What happened across all obligations?
 ```
 
-The LLM is valuable for **reasoning and orchestration**.
+The LLM is useful for:
 
-Deterministic software remains responsible for **financial authorization and enforcement**.
+```text
+Reasoning
+Orchestration
+Tool selection
+Workflow coordination
+```
 
-This separation is central to the LifeOps architecture.
+Deterministic software remains responsible for:
+
+```text
+Policy enforcement
+Financial authorization
+Duplicate protection
+Human approval boundaries
+```
+
+This separation is central to LifeOps.
 
 ---
 
-# 26. Design Philosophy
+# 28. Design Philosophy
 
 LifeOps is built around three principles.
 
-### Autonomous where safe
+### Autonomous Where Safe
 
 Routine obligations should not constantly require human attention.
 
-### Human where necessary
+### Human Where Necessary
 
 High-risk, unusual, or high-value transactions should surface to the user.
 
-### Deterministic where critical
+### Deterministic Where Critical
 
 Sensitive financial execution should never depend solely on probabilistic LLM output.
 
@@ -1133,51 +1555,67 @@ Together, these principles create:
 
 ---
 
-# 27. Hackathon Highlights
+# 29. Hackathon Highlights
 
-LifeOps demonstrates:
-
-**Strands Agents**
+### Strands Agents
 
 Used as the primary autonomous orchestration layer.
 
-**Amazon Bedrock**
+### Amazon Bedrock
 
-Provides the model reasoning behind the agent.
+Provides model reasoning for the agent.
 
-**Amazon Bedrock AgentCore**
+### Amazon Bedrock AgentCore
 
 Hosts the deployed cloud agent runtime.
 
-**AgentCore Observability**
+### AgentCore Observability
 
-Provides runtime trace visibility through CloudWatch.
+Provides runtime trace visibility through Amazon CloudWatch.
 
-**Deterministic Financial Safety**
+### Deterministic Financial Safety
 
 Critical payment authorization remains outside the LLM.
 
-**Human-in-the-Loop Control**
+### Human-in-the-Loop Control
 
 High-value or anomalous obligations require explicit approval.
 
-**Explainable Decisions**
+### Explainable Decisions
 
-Users can inspect historical information and understand why an obligation was escalated.
+Users can inspect historical data and understand why an obligation was escalated.
 
-**End-to-End Product Experience**
+### Public Live Demo
 
-The project includes an API, database, autonomous agent, safety controls, dashboard, human approval workflow, activity history, explainability, automated testing, and cloud deployment.
+Reviewers can experience LifeOps without configuring a local development environment.
+
+### End-to-End Product Experience
+
+LifeOps includes:
+
+- autonomous agent,
+- API,
+- database,
+- dashboard,
+- safety controls,
+- human approval,
+- activity history,
+- explainability,
+- automated testing,
+- public deployment,
+- AgentCore deployment,
+- cloud observability.
 
 ---
 
-# 28. Verified Project Status
+# 30. Verified Project Status
 
 The current LifeOps build has been verified through:
 
 ```text
 ✓ Clean database reset
 ✓ Dashboard startup
+✓ Public live dashboard
 ✓ API health monitoring
 ✓ Three-bill autonomous workflow
 ✓ Historical bill analysis
@@ -1196,11 +1634,14 @@ The current LifeOps build has been verified through:
 ✓ AgentCore runtime READY
 ✓ Successful cloud invocation
 ✓ CloudWatch / AgentCore trace visibility
+✓ Public Render deployment
+✓ Public Render → Amazon Bedrock execution
+✓ End-to-end public human approval workflow
 ```
 
 ---
 
-# 29. Final Result
+# 31. Final Result
 
 LifeOps demonstrates a practical model for autonomous financial agents:
 
@@ -1208,18 +1649,34 @@ LifeOps demonstrates a practical model for autonomous financial agents:
 
 The goal is not to remove humans from financial decision-making.
 
-The goal is to remove humans from routine financial work while ensuring they remain in control when their judgment matters most.
+The goal is to remove humans from repetitive financial busywork while ensuring they remain in control whenever judgment genuinely matters.
 
 ---
 
-## Built With
+# License
+
+LifeOps is released under the **MIT License**.
+
+See:
+
+```text
+LICENSE
+```
+
+for the complete license terms.
+
+---
+
+# Built With
 
 **Strands Agents · Amazon Bedrock · Amazon Bedrock AgentCore · FastAPI · SQLite · Python · JavaScript · AWS CloudWatch**
 
 ---
 
-## Disclaimer
+# Disclaimer
 
-LifeOps is currently a prototype created for demonstration and hackathon purposes.
+LifeOps is a prototype created for demonstration and hackathon purposes.
 
-It does not process real financial transactions and should not be used as a production financial system without appropriate security, regulatory, payment-provider, authentication, and operational controls.
+It does not process real financial transactions.
+
+It should not be used as a production financial system without appropriate security, authentication, payment-provider integration, regulatory controls, infrastructure, and operational safeguards.

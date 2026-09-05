@@ -50,7 +50,7 @@ def investigate_all_bills() -> str:
         task_name = task["name"]
         amount = float(task["amount"])
 
-        # Retrieve historical payments using the existing Strands tool.
+        # Retrieve historical payments.
         history_text = get_bill_history(task_name)
 
         # Retrieve numeric history directly from the database.
@@ -90,16 +90,11 @@ def investigate_all_bills() -> str:
                 historical_amounts,
             )
 
-            # evaluate_bill_policy returns JSON text.
-            if isinstance(policy_result, str):
-                policy_result = json.loads(policy_result)
+            decision = policy_result["decision"] # type: ignore
+            reason = policy_result["reason"] # type: ignore
+            average_amount = policy_result["average_amount"] # pyright: ignore[reportArgumentType]
+            percentage_change = policy_result["percentage_change"] # pyright: ignore[reportArgumentType]
 
-            decision = policy_result["decision"]
-            reason = policy_result["reason"]
-            average_amount = policy_result["average_amount"]
-            percentage_change = policy_result["percentage_change"]
-
-        # Record exactly one decision for this bill.
         conn = sqlite3.connect(DB_PATH)
 
         try:
